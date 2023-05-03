@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { Chat } from "./components/Chat";
 import { CHAT_API_PORT } from "./constants";
 
@@ -6,7 +6,11 @@ function randID() {
   return Math.random().toString(16).slice(8);
 }
 
+const dealEndPrompt = `When a deal has been reached, output a message starting with [DEAL REACHED] and the agreed upon amount. If you decide an agreement cannot be met and would rather walk away, output a message starting with [NO DEAL].`;
+
 export function ChatView({ game, player, stage, round }) {
+  const [busy, setBusy] = useState(false);
+
   function convertChatToOpenAIMessages(messages) {
     const mappedMessages = messages.map(function (message) {
       return { role: message.agentType, content: message.text };
@@ -15,7 +19,7 @@ export function ChatView({ game, player, stage, round }) {
       role: game.get("treatment").llmPromptRole,
       content: `${game.get("treatment").llmPrompt}. Your demeanor should be ${
         game.get("treatment").llmDemeanor
-      }.`,
+      }. ${dealEndPrompt}`,
     });
     return mappedMessages;
   }
@@ -48,6 +52,7 @@ export function ChatView({ game, player, stage, round }) {
     >
       <div className="pr-20 h-full ">
         <Chat
+          busy={busy}
           messages={game.get("messages") || []}
           avatar={`https://avatars.dicebear.com/api/identicon/1.svg`}
           onNewMessage={async (t) => {
@@ -57,40 +62,43 @@ export function ChatView({ game, player, stage, round }) {
               return;
             }
 
-            game.set("messages", [
-              ...(game.get("messages") || []),
-              {
-                text,
-                avatar: `https://avatars.dicebear.com/api/identicon/1.svg`,
-                playerId: player._id,
-                gamePhase: `Round ${round.index} - ${stage.name}`,
-                id: randID(),
-                timestamp: Date.now(),
-                agentType: "user",
-              },
-            ]);
+            setBusy(true);
 
-            let chatResponse;
             try {
-              chatResponse = await getChatResponse(game.get("messages"));
+              game.set("messages", [
+                ...(game.get("messages") || []),
+                {
+                  text,
+                  avatar: `https://avatars.dicebear.com/api/identicon/1.svg`,
+                  playerId: player._id,
+                  gamePhase: `Round ${round.index} - ${stage.name}`,
+                  id: randID(),
+                  timestamp: Date.now(),
+                  agentType: "user",
+                },
+              ]);
+
+              const chatResponse = await getChatResponse(game.get("messages"));
+
+              game.set("messages", [
+                ...(game.get("messages") || []),
+                {
+                  text: chatResponse,
+                  avatar:
+                    "https://www.iconarchive.com/download/i106658/diversity-avatars/avatars/robot-01.1024.png",
+                  playerId: player._id,
+                  gamePhase: `Round ${round.index} - ${stage.name}`,
+                  id: randID(),
+                  timestamp: Date.now(),
+                  agentType: "assistant",
+                },
+              ]);
             } catch (err) {
               console.error(err);
               return;
             }
 
-            game.set("messages", [
-              ...(game.get("messages") || []),
-              {
-                text: chatResponse,
-                avatar:
-                  "https://www.iconarchive.com/download/i106658/diversity-avatars/avatars/robot-01.1024.png",
-                playerId: player._id,
-                gamePhase: `Round ${round.index} - ${stage.name}`,
-                id: randID(),
-                timestamp: Date.now(),
-                agentType: "assistant",
-              },
-            ]);
+            setBusy(false);
           }}
         />
       </div>

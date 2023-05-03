@@ -1,7 +1,7 @@
 import React, { useEffect, useRef } from "react";
 import { Avatar } from "./Avatar";
 
-export function Chat({ messages, avatar, onNewMessage }) {
+export function Chat({ messages, avatar, onNewMessage, busy }) {
   // Auto-scroll for the chat
   const prevMessages = useRef(messages);
   const messagesRef = useRef();
@@ -20,7 +20,12 @@ export function Chat({ messages, avatar, onNewMessage }) {
           <Messages messages={messages} showNoMessages />
         </div>
         <div className="px-2">
-          <Input autoFocus={true} avatar={avatar} onNewMessage={onNewMessage} />
+          <Input
+            autoFocus={true}
+            avatar={avatar}
+            onNewMessage={onNewMessage}
+            disabled={busy}
+          />
         </div>
       </div>
     </div>
@@ -62,7 +67,7 @@ function Messages({ messages, maxSize = 0, showNoMessages = false }) {
   });
 }
 
-function Input({ avatar, onFocus, onBlur, autoFocus, onNewMessage }) {
+function Input({ avatar, onFocus, onBlur, autoFocus, onNewMessage, disabled }) {
   const textAreaRef = useRef();
   const formRef = useRef();
 
@@ -94,39 +99,40 @@ function Input({ avatar, onFocus, onBlur, autoFocus, onNewMessage }) {
   };
 
   return (
-    <form
-      onSubmit={handleSubmit}
-      className="w-full font-semibold flex flex-row items-center rounded-xl pl-2 pr-1 py-1 ring-2 bg-gray-50 ring-gray-200 focus-within:ring-gray-400 space-x-2"
-      ref={formRef}
-    >
-      <div className="w-6 h-6 flex-shrink-0">
-        <Avatar src={avatar} />
-      </div>
-
-      <textarea
-        autoFocus={autoFocus}
-        onBlur={onBlur}
-        onFocus={onFocus}
-        className="peer resize-none w-full py-1 px-2 pr-0 ring-none border-none leading-snug bg-transparent placeholder:text-gray-300 text-md focus:ring-0 text-gray-600"
-        rows={1}
-        placeholder="Say something..."
-        onChange={resize}
-        onKeyDown={(e) => {
-          if (e.keyCode == 13 && e.shiftKey == false) {
-            e.preventDefault();
-            formRef.current.requestSubmit();
-          }
-        }}
-        ref={textAreaRef}
-        name="text"
-      />
-
-      <button
-        type="submit"
-        className="py-0.5 px-2 rounded-lg bg-transaprent text-gray-300 peer-focus:text-gray-500 mt-[1px]"
+    <form onSubmit={handleSubmit} ref={formRef}>
+      <fieldset
+        disabled={disabled}
+        className="w-full font-semibold flex flex-row items-center rounded-xl pl-2 pr-1 py-1 ring-2 bg-gray-50 ring-gray-200 focus-within:ring-gray-400 space-x-2"
       >
-        Send
-      </button>
+        <div className="w-6 h-6 flex-shrink-0">
+          <Avatar src={avatar} />
+        </div>
+
+        <textarea
+          autoFocus={autoFocus}
+          onBlur={onBlur}
+          onFocus={onFocus}
+          className="peer resize-none w-full py-1 px-2 pr-0 ring-none border-none leading-snug bg-transparent placeholder:text-gray-300 text-md focus:ring-0 text-gray-600"
+          rows={1}
+          placeholder="Say something..."
+          onChange={resize}
+          onKeyDown={(e) => {
+            if (e.keyCode == 13 && e.shiftKey == false) {
+              e.preventDefault();
+              formRef.current.requestSubmit();
+            }
+          }}
+          ref={textAreaRef}
+          name="text"
+        />
+
+        <button
+          type="submit"
+          className="py-0.5 px-2 rounded-lg bg-transaprent text-gray-300 peer-focus:text-gray-500 mt-[1px]"
+        >
+          Send
+        </button>
+      </fieldset>
     </form>
   );
 }
