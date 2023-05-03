@@ -6,20 +6,25 @@ function randID() {
   return Math.random().toString(16).slice(8);
 }
 
-const dealEndPrompt = `When a deal has been reached, output a message starting with [DEAL REACHED] and the agreed upon amount. If you decide an agreement cannot be met and would rather walk away, output a message starting with [NO DEAL].`;
+const dealEndPrompt = `When a deal has been reached, output a single line that contains a string [DEAL REACHED] and the agreed upon amount, for example "[DEAL REACHED] $200", if the agreed upon amount is $200. If you decide an agreement cannot be met and would rather walk away, output a single line with a string [NO DEAL]. Do not output any other messages, do not format your response. Your output will be parsed by a computer.`;
 
 export function ChatView({ game, player, stage, round }) {
   const [busy, setBusy] = useState(false);
 
   function convertChatToOpenAIMessages(messages) {
-    const mappedMessages = messages.map(function (message) {
-      return { role: message.agentType, content: message.text };
-    });
+    const mappedMessages = messages.map((message) => ({
+      role: message.agentType,
+      content: message.text,
+    }));
     mappedMessages.splice(0, 0, {
       role: game.get("treatment").llmPromptRole,
       content: `${game.get("treatment").llmPrompt}. Your demeanor should be ${
         game.get("treatment").llmDemeanor
-      }. ${dealEndPrompt}`,
+      }.`,
+    });
+    mappedMessages.push({
+      role: "system",
+      content: dealEndPrompt,
     });
     return mappedMessages;
   }
