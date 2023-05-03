@@ -1,2 +1,2 @@
 // @ts-ignore
-export const OPENAI_API_KEY = import.meta.env.VITE_OPENAI_API_KEY;
+export const CHAT_API_PORT = import.meta.env.VITE_CHAT_API_PORT;

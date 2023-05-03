@@ -1,14 +1,13 @@
 import React from "react";
 import { Chat } from "./components/Chat";
-import { Configuration, OpenAIApi } from "openai";
-import { OPENAI_API_KEY } from "./constants";
+import { CHAT_API_PORT } from "./constants";
 
 function randID() {
   return Math.random().toString(16).slice(8);
 }
 
 export function ChatView({ game, player, stage, round }) {
-  function mapChatLog(messages) {
+  function convertChatToOpenAIMessages(messages) {
     const mappedMessages = messages.map(function (message) {
       return { role: message.agentType, content: message.text };
     });
@@ -18,46 +17,40 @@ export function ChatView({ game, player, stage, round }) {
         game.get("treatment").llmDemeanor
       }.`,
     });
-    // mappedMessages.splice(0, 0, {"role": "system", "content": `${game.get("treatment").llmPrompt}`})
     return mappedMessages;
   }
 
-  const configuration = new Configuration({
-    apiKey: OPENAI_API_KEY,
-  });
+  async function getChatResponse(messages) {
+    const apiUrl = `http://localhost:${CHAT_API_PORT}/chat`;
 
-  const openai = new OpenAIApi(configuration);
+    const openAIMessages = convertChatToOpenAIMessages(messages);
 
-  // async function getLLMResponse(prompt){
-  //     var response = await openai.createCompletion({
-  //         model: "text-davinci-003",
-  //         prompt: prompt,
-  //         temperature: 0,
-  //         max_tokens: 30,
-  //       });
-  //     //   console.log(prompt)
-  //     //   console.log(response.data.choices[0]["text"]);
-  //     return(response.data.choices[0]["text"])
-  // }
-
-  async function getChatResponse(mappedMessages) {
-    var response = await openai.createChatCompletion({
-      model: "gpt-3.5-turbo",
-      messages: mappedMessages,
-      temperature: game.get("treatment").temperature,
+    const response = await fetch(apiUrl, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        messages: openAIMessages,
+        temperature: game.get("treatment").temperature,
+      }),
     });
-    console.log(response);
 
-    return response.data.choices[0].message.content;
+    const { chatResponse } = await response.json();
+
+    return chatResponse;
   }
 
   return (
-    <div className="h-full max-w-5xl mx-auto">
+    <div
+      className="overflow-y-auto h-full max-w-5xl mx-auto"
+      style={{ maxHeight: "90vh" }}
+    >
       <div className="pr-20 h-full ">
         <Chat
           messages={game.get("messages") || []}
           avatar={`https://avatars.dicebear.com/api/identicon/1.svg`}
-          onNewMessage={(t) => {
+          onNewMessage={async (t) => {
             const text = t.trim();
 
             if (text.length === 0) {
@@ -77,42 +70,27 @@ export function ChatView({ game, player, stage, round }) {
               },
             ]);
 
-            getChatResponse(mapChatLog(game.get("messages"))).then(
-              (llmReply) => {
-                game.set("messages", [
-                  ...(game.get("messages") || []),
-                  {
-                    text: llmReply,
-                    avatar:
-                      "https://www.iconarchive.com/download/i106658/diversity-avatars/avatars/robot-01.1024.png",
-                    playerId: player._id,
-                    gamePhase: `Round ${round.index} - ${stage.name}`,
-                    id: randID(),
-                    timestamp: Date.now(),
-                    agentType: "assistant",
-                  },
-                ]);
-              }
-            );
+            let chatResponse;
+            try {
+              chatResponse = await getChatResponse(game.get("messages"));
+            } catch (err) {
+              console.error(err);
+              return;
+            }
 
-            // getLLMResponse(text).then((llmReply => {
-            //     game.set("messages", [
-            //         ...(game.get("messages") || []),
-            //         {
-            //           text: llmReply,
-            //           avatar: <img
-            //           className="h-full w-full rounded-md shadow bg-white p-1"
-            //           src={`https://avatars.dicebear.com/api/identicon/2.svg`}
-            //           alt="Avatar"
-            //         />,
-            //           playerId: player._id,
-            //           gamePhase: `Round ${round.index} - ${stage.name}`,
-            //           id: randID(),
-            //           timestamp: Date.now(),
-            //           agentType: "assistant"
-            //         },
-            //       ]);
-            // }))
+            game.set("messages", [
+              ...(game.get("messages") || []),
+              {
+                text: chatResponse,
+                avatar:
+                  "https://www.iconarchive.com/download/i106658/diversity-avatars/avatars/robot-01.1024.png",
+                playerId: player._id,
+                gamePhase: `Round ${round.index} - ${stage.name}`,
+                id: randID(),
+                timestamp: Date.now(),
+                agentType: "assistant",
+              },
+            ]);
           }}
         />
       </div>

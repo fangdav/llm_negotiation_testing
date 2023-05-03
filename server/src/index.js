@@ -9,6 +9,7 @@ import { info, setLogLevel } from "@empirica/core/console";
 import minimist from "minimist";
 import process from "process";
 import { Empirica } from "./callbacks";
+import { initApi } from "./chat-api";
 
 const argv = minimist(process.argv.slice(2), { string: ["token"] });
 
@@ -33,4 +34,6 @@ setLogLevel(argv["loglevel"] || "info");
       info("server: started");
     });
   });
+
+  initApi();
 })();
