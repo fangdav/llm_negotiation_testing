@@ -47,11 +47,17 @@ const chatApiHandler = async (req, res) => {
     return;
   }
 
-  const chatResponse = await getChatResponse({ messages, temperature });
-
-  res.send({
-    chatResponse,
-  });
+  try {
+    const chatResponse = await getChatResponse({ messages, temperature });
+    res.send({
+      chatResponse,
+    });
+    return;
+  } catch (err) {
+    console.error(err);
+    res.status(500).send("Failed to get chat response");
+    return;
+  }
 };
 
 export const initApi = () => {
