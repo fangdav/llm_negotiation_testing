@@ -32,4 +32,11 @@ factors:
       values:
         - value: user
         - value: system
-treatments: []
+treatments:
+    - name: Solo
+      factors:
+        llmDemeanor: kind
+        llmPrompt: 'You are moving and would like to sell a table that you no longer need.  You posted an advertisement and one possible buyer has contacted you. You are about to meet with this possible buyer to discuss the price.  Important facts:  1. The table is in excellent condition and has already been seen by the buyer.  2. You bought the table new from a local furniture store for $300.  3. The same furniture store offered to buy back the used table for $90.   Try to sell the table for as much money as possible. You do not have to reach an agreement. If you don''t reach an agreement, you will sell the table to the furniture store for $90.   Persona guide: You should be very strategic. Think carefully about the offer made. Begin by asking if the user is interested in buying your table.'
+        llmPromptRole: system
+        playerCount: 1
+        temperature: 0.2

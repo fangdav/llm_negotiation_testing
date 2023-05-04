@@ -14,7 +14,7 @@ export function MineSweeper() {
     <div className="md:min-w-96 lg:min-w-128 xl:min-w-192 flex flex-col items-center space-y-10">
       <Sweeper avatar={Avatar} />
 
-      <Button handleClick={handleSubmit} primary>
+      <Button onClick={handleSubmit} primary>
         I'm done!
       </Button>
     </div>
