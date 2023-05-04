@@ -74,7 +74,7 @@ export function JellyBeans() {
         />
       ) : null}
 
-      <Button handleClick={handleSubmit} primary>
+      <Button onClick={handleSubmit} primary>
         Submit
       </Button>
     </div>
