@@ -7,9 +7,9 @@ import {
 } from "@empirica/core/player/classic/react";
 import { Loading } from "@empirica/core/player/react";
 import React from "react";
-
-import { ChatWithLLM } from "./ChatWithLLM";
 import { ChatWithHuman } from "./ChatWithHuman";
+import { ChatWithLLM } from "./ChatWithLLM";
+import { Result } from "./Result";
 
 export function Stage() {
   const game = useGame();
@@ -30,16 +30,38 @@ export function Stage() {
     );
   }
 
-  switch (round.get("task")) {
-    case "llm-vs-human":
-      return (
-        <ChatWithLLM game={game} player={player} round={round} stage={stage} />
-      );
-    case "human-vs-human":
-      return (
-        <ChatWithHuman game={game} player={player} players={players} round={round} stage={stage} />
-      );
+  const onNext = () => {
+    player.stage.set("submit", true);
+  };
+
+  switch (stage.get("name")) {
+    case "Negotiation":
+      switch (round.get("task")) {
+        case "llm-vs-human":
+          return (
+            <ChatWithLLM
+              game={game}
+              player={player}
+              round={round}
+              stage={stage}
+            />
+          );
+        case "human-vs-human":
+          return (
+            <ChatWithHuman
+              game={game}
+              player={player}
+              players={players}
+              round={round}
+              stage={stage}
+            />
+          );
+        default:
+          return <div>Unknown task</div>;
+      }
+    case "Result":
+      return <Result next={onNext} game={game} />;
     default:
-      return <div>Unknown task</div>;
+      break;
   }
 }

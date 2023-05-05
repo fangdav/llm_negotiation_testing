@@ -15,7 +15,8 @@ Empirica.onGameStart(({ game }) => {
     name: "Round 1",
     task,
   });
-  round.addStage({ name: "Negotiations", duration: 3600 });
+  round.addStage({ name: "Negotiation", duration: 3600 });
+  round.addStage({ name: "Result", duration: 30 });
 
   const firstPlayerRole = treatment.firstPlayerRole || "buyer";
   game.players[0].set("role", firstPlayerRole);
