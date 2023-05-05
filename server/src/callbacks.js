@@ -4,7 +4,7 @@ export const Empirica = new ClassicListenersCollector();
 Empirica.onGameStart(({ game }) => {
   const treatment = game.get("treatment");
 
-  const { humanSellerInstructions, humanBuyerInstructions, playerCount } =
+  const { firstPlayerInstructions, secondPlayerInstructions, playerCount } =
     treatment;
 
   const multiplayer = playerCount === 2;
@@ -18,24 +18,10 @@ Empirica.onGameStart(({ game }) => {
   round.addStage({ name: "Negotiation", duration: 3600 });
   round.addStage({ name: "Result", duration: 30 });
 
-  const firstPlayerRole = treatment.firstPlayerRole || "buyer";
-  game.players[0].set("role", firstPlayerRole);
-  game.players[0].set(
-    "instructions",
-    firstPlayerRole === "buyer"
-      ? humanBuyerInstructions
-      : humanSellerInstructions
-  );
+  game.players[0].set("instructions", firstPlayerInstructions);
 
   if (multiplayer) {
-    const secondPlayerRole = firstPlayerRole === "buyer" ? "seller" : "buyer";
-    game.players[1].set("role", secondPlayerRole);
-    game.players[1].set(
-      "instructions",
-      secondPlayerRole === "buyer"
-        ? humanBuyerInstructions
-        : humanSellerInstructions
-    );
+    game.players[1].set("instructions", secondPlayerInstructions);
   }
 
   game.set("currentTurnPlayerId", game.players[0].id);
