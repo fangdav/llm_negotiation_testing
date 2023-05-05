@@ -1,11 +1,8 @@
 // @ts-check
-import React, { useEffect, useState } from "react";
-import { Chat } from "./components/Chat";
+import React from "react";
+import { ChatCommon } from "./ChatCommon";
 import { CHAT_API_PORT } from "./constants";
-
-function randID() {
-  return Math.random().toString(16).slice(8);
-}
+import { randID } from "./utils";
 
 const DEAL_REACHED = "[DEAL REACHED]";
 const NO_DEAL = "[NO DEAL]";
@@ -72,8 +69,10 @@ const extractMessageProposal = (message) => {
 };
 
 export function ChatWithLLM({ game, player, stage, round }) {
-  const [busy, setBusy] = useState(false);
   const messages = game.get("messages") || [];
+
+  const playerId = player.id;
+  const assistantPlayerId = `${player.id}-assistant`;
 
   /**
    * @param {any[]} messages
@@ -131,16 +130,13 @@ export function ChatWithLLM({ game, player, stage, round }) {
       return;
     }
 
-    setBusy(true);
-
     try {
       const messagesWithUserMessage = [
         ...messages,
         {
           type: "message",
           text,
-          avatar: `https://avatars.dicebear.com/api/identicon/1.svg`,
-          playerId: player._id,
+          playerId,
           gamePhase: `Round ${round.index} - ${stage.name}`,
           id: randID(),
           timestamp: Date.now(),
@@ -149,169 +145,54 @@ export function ChatWithLLM({ game, player, stage, round }) {
       ];
       game.set("messages", messagesWithUserMessage);
 
-      const chatResponse = await getChatResponse(messagesWithUserMessage);
-      const extracted = extractMessageProposal(chatResponse);
+      game.set("currentTurnPlayerId", assistantPlayerId);
 
-      const messagesWithLLMResponse = [
-        ...messagesWithUserMessage,
-        {
-          type: extracted.type,
-          ...(extracted.type === "proposal" && {
-            proposal: extracted.proposal,
-            proposalStatus: "pending",
-          }),
-          ...(extracted.type === "no-deal" && {
-            noDealStatus: "pending",
-          }),
-          text: extracted.text,
-          originalText: chatResponse,
-          avatar:
-            "https://www.iconarchive.com/download/i106658/diversity-avatars/avatars/robot-01.1024.png",
-          playerId: player._id,
-          gamePhase: `Round ${round.index} - ${stage.name}`,
-          id: randID(),
-          timestamp: Date.now(),
-          agentType: "assistant",
-        },
-      ];
+      try {
+        const chatResponse = await getChatResponse(messagesWithUserMessage);
+        const extracted = extractMessageProposal(chatResponse);
 
-      console.log("messagesWithLLMResponse", messagesWithLLMResponse);
-
-      game.set("messages", messagesWithLLMResponse);
-    } catch (err) {
-      console.error(err);
-      return;
-    }
-
-    setBusy(false);
-  };
-
-  const onAccept = async () => {
-    setBusy(true);
-
-    try {
-      const lastMessage = messages[messages.length - 1];
-
-      if (lastMessage.type === "proposal") {
-        lastMessage.proposalStatus = "accepted";
-        game.set("messages", [...messages]);
-
-        // We might want to save this data to a stage or a round instead if the game can have multiple rounds
-        game.set("result", "deal-reached");
-        game.set("price", lastMessage.proposal);
-        player.stage.set("submit", true);
+        const messagesWithLLMResponse = [
+          ...messagesWithUserMessage,
+          {
+            type: extracted.type,
+            ...(extracted.type === "proposal" && {
+              proposal: extracted.proposal,
+              proposalStatus: "pending",
+            }),
+            ...(extracted.type === "no-deal" && {
+              noDealStatus: "pending",
+            }),
+            text: extracted.text,
+            originalText: chatResponse,
+            playerId: `${player.id}-assistant`,
+            gamePhase: `Round ${round.index} - ${stage.name}`,
+            id: randID(),
+            timestamp: Date.now(),
+            agentType: "assistant",
+          },
+        ];
+        game.set("messages", messagesWithLLMResponse);
+        game.set("currentTurnPlayerId", playerId);
+      } catch (err) {
+        // Make sure that the turn is returned to the player if there is an error
+        game.set("currentTurnPlayerId", playerId);
+        throw err;
       }
     } catch (err) {
       console.error(err);
       return;
     }
-
-    setBusy(false);
   };
-
-  const onReject = async () => {
-    setBusy(true);
-
-    try {
-      const lastMessage = messages[messages.length - 1];
-
-      if (lastMessage.type === "proposal") {
-        lastMessage.proposalStatus = "rejected";
-        game.set("messages", [...messages]);
-      }
-    } catch (err) {
-      console.error(err);
-      return;
-    }
-
-    setBusy(false);
-  };
-
-  const onEnd = async () => {
-    setBusy(true);
-
-    try {
-      const lastMessage = messages[messages.length - 1];
-
-      if (lastMessage.type === "no-deal") {
-        lastMessage.noDealStatus = "ended";
-        game.set("messages", [...messages]);
-
-        // We might want to save this data to a stage or a round instead if the game can have multiple rounds
-        game.set("result", "no-deal");
-        player.stage.set("submit", true);
-      }
-    } catch (err) {
-      console.error(err);
-      return;
-    }
-
-    setBusy(false);
-  };
-
-  const onContinue = async () => {
-    setBusy(true);
-
-    try {
-      const lastMessage = messages[messages.length - 1];
-
-      if (lastMessage.type === "no-deal") {
-        lastMessage.noDealStatus = "continued";
-        game.set("messages", [...messages]);
-      }
-    } catch (err) {
-      console.error(err);
-      return;
-    }
-
-    setBusy(false);
-  };
-
-  const hasProposalPending =
-    messages[messages.length - 1]?.proposalStatus === "pending";
-  const hasNoDealPending =
-    messages[messages.length - 1]?.noDealStatus === "pending";
-
-  const hasProposalAccepted =
-    messages[messages.length - 1]?.proposalStatus === "accepted";
-  const hasProposalRejected =
-    messages[messages.length - 1]?.proposalStatus === "rejected";
-
-  const hasNoDealEnded =
-    messages[messages.length - 1]?.noDealStatus === "ended";
-  const hasNoDealContinued =
-    messages[messages.length - 1]?.noDealStatus === "continued";
-
-  const chatEnded =
-    hasProposalAccepted ||
-    hasProposalRejected ||
-    hasNoDealEnded ||
-    hasNoDealContinued;
-
-  const stageSubmitted = player.stage.get("submit");
-
-  // This will submit the local player stage if the chat has ended by any of the players
-  useEffect(() => {
-    if (!stageSubmitted && chatEnded) {
-      player.stage.set("submit", true);
-    }
-  }, [stageSubmitted, chatEnded]);
 
   return (
-    <div
-      className="overflow-y-auto h-full container mx-auto"
-      style={{ maxHeight: "80vh" }}
-    >
-      <Chat
-        busy={busy || stageSubmitted}
-        messages={messages}
-        avatar={`https://avatars.dicebear.com/api/identicon/1.svg`}
-        onNewMessage={onNewMessage}
-        onAccept={hasProposalPending ? onAccept : undefined}
-        onReject={hasProposalPending ? onReject : undefined}
-        onEnd={hasNoDealPending ? onEnd : undefined}
-        onContinue={hasNoDealPending ? onContinue : undefined}
-      />
-    </div>
+    <ChatCommon
+      game={game}
+      player={player}
+      round={round}
+      stage={stage}
+      onNewMessage={onNewMessage}
+      playerId={playerId}
+      otherPlayerId={assistantPlayerId}
+    />
   );
 }

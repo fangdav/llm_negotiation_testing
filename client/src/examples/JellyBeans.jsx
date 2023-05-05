@@ -101,7 +101,7 @@ function PlayerScore(player, onChange, isResultStage) {
     <div key={player.id} className="py-4">
       <div className="flex items-center space-x-6">
         <div className="h-12 w-12 shrink-0">
-          <Avatar player={player} />
+          <Avatar playerId={player.id} />
         </div>
         <Slider
           value={player.round.get("guess")}
