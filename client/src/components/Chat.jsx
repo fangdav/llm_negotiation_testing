@@ -117,28 +117,41 @@ export function Chat({
               )}
             </div>
           </div>
-          {!waitingOnOtherPlayer && !waitingOnNoDeal && !waitingOnProposal && (
-            <div className="text-sm pl-12 pt-2 text-gray-500">
-              <span>When you're ready </span>
-              <button
-                className="border border-green-500 text-green-500 px-2 py-1 rounded-md text-xs"
-                onClick={() => setInputMode("proposal")}
-              >
-                Propose a deal
-              </button>
-              {messages.length > 0 && (
-                <>
-                  <span> or </span>
-                  <button
-                    className="border border-red-500 text-red-500 px-2 py-1 rounded-md text-xs"
-                    onClick={onNewNoDeal}
-                  >
-                    End with no deal
-                  </button>
-                </>
-              )}
-            </div>
-          )}
+          {!waitingOnOtherPlayer &&
+            !waitingOnNoDeal &&
+            !waitingOnProposal &&
+            (inputMode === "message" ? (
+              <div className="text-sm pl-12 pt-2 text-gray-500">
+                <span>When you're ready </span>
+                <button
+                  className="border border-green-500 text-green-500 px-2 py-1 rounded-md text-xs"
+                  onClick={() => setInputMode("proposal")}
+                >
+                  Propose a deal
+                </button>
+                {messages.length > 0 && (
+                  <>
+                    <span> or </span>
+                    <button
+                      className="border border-red-500 text-red-500 px-2 py-1 rounded-md text-xs"
+                      onClick={onNewNoDeal}
+                    >
+                      End with no deal
+                    </button>
+                  </>
+                )}
+              </div>
+            ) : (
+              <div className="text-sm pl-12 pt-2 text-gray-500">
+                <span>If you've changed your mind </span>
+                <button
+                  className="border border-blue-500 text-blue-500 px-2 py-1 rounded-md text-xs"
+                  onClick={() => setInputMode("message")}
+                >
+                  Keep negotiating
+                </button>
+              </div>
+            ))}
         </div>
       </div>
     </div>
