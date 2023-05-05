@@ -9,6 +9,8 @@ export function ChatCommon({
   round,
   stage,
   onNewMessage: onNewMessageImpl,
+  onNewNoDeal: onNewNoDealImpl = undefined,
+  onNewProposal: onNewProposalImpl = undefined,
   playerId,
   otherPlayerId,
 }) {
@@ -120,6 +122,8 @@ export function ChatCommon({
         },
       ]);
       game.set("currentTurnPlayerId", otherPlayerId);
+
+      onNewNoDealImpl();
     } catch (err) {
       console.error(err);
       return;
@@ -146,6 +150,8 @@ export function ChatCommon({
         },
       ]);
       game.set("currentTurnPlayerId", otherPlayerId);
+
+      onNewProposalImpl(proposal);
     } catch (err) {
       console.error(err);
       return;

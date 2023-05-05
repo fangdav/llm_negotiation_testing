@@ -206,7 +206,7 @@ function NoDealMessage({ message }) {
         <Avatar playerId={message.playerId} />
       </div>
       <div>
-        <div>Rejected the deal</div>
+        <div>Proposed to end without a deal</div>
         <div>
           {message.noDealStatus === "ended" && (
             <span className="text-red-500">Ended with no deal</span>
