@@ -69,7 +69,7 @@ export function Chat({
                 >
                   Propose a deal
                 </button>
-                {messages.length > 0 && (
+                {messages.length > 0 && onNewNoDeal && (
                   <>
                     <span> or </span>
                     <button
@@ -82,7 +82,7 @@ export function Chat({
                 )}
               </div>
             ) : (
-              <div className="text-sm pl-12 pt-2 text-gray-500">
+              <div className="text-sm pl-12 pb-2 text-gray-500">
                 <span>If you've changed your mind </span>
                 <button
                   className="border border-blue-500 text-blue-500 px-2 py-1 rounded-md text-xs"

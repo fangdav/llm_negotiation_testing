@@ -3,9 +3,33 @@ import React, { useEffect, useState } from "react";
 import { Chat } from "./components/Chat";
 import { randID } from "./utils";
 
+const getHumanNoDealBehavior = (game, player, players) => {
+  const {
+    firstPlayerAllowNoDeal,
+    secondPlayerAllowNoDeal,
+    firstPlayerUnilateralNoDeal,
+    secondPlayerUnilateralNoDeal,
+  } = game.get("treatment");
+
+  const isFirst = players[0].id === player.id;
+
+  const allowNoDeal = isFirst
+    ? firstPlayerAllowNoDeal
+    : secondPlayerAllowNoDeal;
+  const unilateralNoDeal = isFirst
+    ? firstPlayerUnilateralNoDeal
+    : secondPlayerUnilateralNoDeal;
+
+  return {
+    allowNoDeal,
+    unilateralNoDeal,
+  };
+};
+
 export function ChatCommon({
   game,
   player,
+  players,
   round,
   stage,
   onNewMessage: onNewMessageImpl,
@@ -16,6 +40,12 @@ export function ChatCommon({
 }) {
   const [busy, setBusy] = useState(false);
   const messages = game.get("messages") || [];
+
+  const { allowNoDeal, unilateralNoDeal } = getHumanNoDealBehavior(
+    game,
+    player,
+    players
+  );
 
   const onNewMessage = async (newMessage) => {
     setBusy(true);
@@ -121,7 +151,14 @@ export function ChatCommon({
           agentType: "user",
         },
       ]);
-      game.set("currentTurnPlayerId", otherPlayerId);
+
+      if (unilateralNoDeal) {
+        // We might want to save this data to a stage or a round instead if the game can have multiple rounds
+        game.set("result", "no-deal");
+        player.stage.set("submit", true);
+      } else {
+        game.set("currentTurnPlayerId", otherPlayerId);
+      }
 
       onNewNoDealImpl();
     } catch (err) {
@@ -195,7 +232,7 @@ export function ChatCommon({
         playerId={playerId}
         instructions={player.get("instructions")}
         onNewMessage={onNewMessage}
-        onNewNoDeal={onNewNoDeal}
+        onNewNoDeal={allowNoDeal ? onNewNoDeal : undefined}
         onNewProposal={onNewProposal}
         onAccept={
           !waitingOnOtherPlayer && hasProposalPending ? onAccept : undefined

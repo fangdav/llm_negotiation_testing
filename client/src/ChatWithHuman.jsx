@@ -44,6 +44,7 @@ export function ChatWithHuman({ game, player, players, stage, round }) {
     <ChatCommon
       game={game}
       player={player}
+      players={players}
       round={round}
       stage={stage}
       onNewMessage={onNewMessage}

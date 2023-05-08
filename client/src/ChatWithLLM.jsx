@@ -13,9 +13,20 @@ const DEAL_REJECTED = "[DEAL REJECTED]";
 const NO_DEAL_ACCEPTED = "[NO DEAL ACCEPTED]";
 const NO_DEAL_REJECTED = "[NO DEAL REJECTED]";
 
-const proposedDealPrompt = `When a deal has been reached, output a single line that contains a string ${DEAL_REACHED} and the agreed upon amount, for example "${DEAL_REACHED} $200", if the agreed upon amount is $200.
-If you decide an agreement cannot be met and would rather walk away, output a single line with a string ${NO_DEAL}.
-Do not output any other messages, do not format your response, use ${DEAL_REACHED} or ${NO_DEAL} verbatim. Your output will be parsed by a computer.
+/**
+ * @param {boolean} allowNoDeal
+ */
+const proposeDealPrompt = (
+  allowNoDeal
+) => `When a deal has been reached, output a single line that contains a string ${DEAL_REACHED} and the agreed upon amount, for example "${DEAL_REACHED} $200", if the agreed upon amount is $200.
+${
+  allowNoDeal
+    ? `If you decide an agreement cannot be met and would rather walk away, output a single line with a string ${NO_DEAL}.
+`
+    : ""
+}Do not output any other messages, do not format your response, use ${DEAL_REACHED}${
+  allowNoDeal ? ` or ${NO_DEAL}` : ""
+} verbatim. Your output will be parsed by a computer.
 If the user rejects your proposal, continue negotiating.
 If the user wants to continue negotiating, continue negotiating.`;
 
@@ -139,15 +150,46 @@ const extractMessageProposal = (message) => {
   }
 };
 
-export function ChatWithLLM({ game, player, stage, round }) {
+const getLlmNoDealBehavior = (game) => {
+  const {
+    firstPlayerAllowNoDeal,
+    secondPlayerAllowNoDeal,
+    firstPlayerUnilateralNoDeal,
+    secondPlayerUnilateralNoDeal,
+    llmStartsFirst,
+  } = game.get("treatment");
+
+  const allowNoDeal = llmStartsFirst
+    ? firstPlayerAllowNoDeal
+    : secondPlayerAllowNoDeal;
+  const unilateralNoDeal = llmStartsFirst
+    ? firstPlayerUnilateralNoDeal
+    : secondPlayerUnilateralNoDeal;
+
+  return {
+    allowNoDeal,
+    unilateralNoDeal,
+  };
+};
+
+const getLlmInstructions = (game) => {
+  const { firstPlayerInstructions, secondPlayerInstructions, llmStartsFirst } = game.get("treatment");
+
+  return llmStartsFirst ? firstPlayerInstructions : secondPlayerInstructions;
+};
+
+export function ChatWithLLM({ game, player, players, stage, round }) {
   const playerId = player.id;
   const assistantPlayerId = `${player.id}-assistant`;
+
+  const { llmPromptRole, llmDemeanor } = game.get("treatment");
+  const llmPrompt = getLlmInstructions(game);
+  const { allowNoDeal, unilateralNoDeal } = getLlmNoDealBehavior(game);
 
   /**
    * @param {any[]} messages
    */
   function convertChatToOpenAIMessages(messages) {
-    const { llmPromptRole, llmPrompt, llmDemeanor } = game.get("treatment");
 
     const mappedMessages = messages.map((message) => {
       const { type, agentType, text } = message;
@@ -186,7 +228,7 @@ export function ChatWithLLM({ game, player, stage, round }) {
     } else {
       mappedMessages.push({
         role: llmPromptRole,
-        content: proposedDealPrompt,
+        content: proposeDealPrompt(allowNoDeal),
       });
     }
 
@@ -283,7 +325,10 @@ export function ChatWithLLM({ game, player, stage, round }) {
         game.set("result", "deal-reached");
         game.set("price", lastMessage.proposal);
         player.stage.set("submit", true);
-      } else if (extracted.type === "no-deal-accepted") {
+      } else if (
+        extracted.type === "no-deal-accepted" ||
+        (extracted.type === "no-deal" && unilateralNoDeal)
+      ) {
         // We might want to save this data to a stage or a round instead if the game can have multiple rounds
         game.set("result", "no-deal");
         player.stage.set("submit", true);
@@ -335,6 +380,7 @@ export function ChatWithLLM({ game, player, stage, round }) {
     <ChatCommon
       game={game}
       player={player}
+      players={players}
       round={round}
       stage={stage}
       onNewMessage={onNewMessage}
