@@ -186,8 +186,8 @@ export function ChatCommon({
 
   return (
     <div
-      className="overflow-y-auto h-full w-full max-w-screen-lg mx-auto"
-      style={{ maxHeight: "80vh" }}
+      className="overflow-y-auto h-full w-full max-w-screen-lg mx-auto pb-12"
+      style={{ maxHeight: "calc(100vh - 56px)" }}
     >
       <Chat
         busy={busy || stageSubmitted || waitingOnOtherPlayer}
