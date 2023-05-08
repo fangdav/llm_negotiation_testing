@@ -1,5 +1,5 @@
 // @ts-check
-import React from "react";
+import React, { useEffect } from "react";
 import { ChatCommon } from "./ChatCommon";
 import { CHAT_API_PORT } from "./constants";
 import { randID } from "./utils";
@@ -172,25 +172,18 @@ const getLlmNoDealBehavior = (game) => {
   };
 };
 
-const getLlmInstructions = (game) => {
-  const { firstPlayerInstructions, secondPlayerInstructions, llmStartsFirst } = game.get("treatment");
-
-  return llmStartsFirst ? firstPlayerInstructions : secondPlayerInstructions;
-};
-
 export function ChatWithLLM({ game, player, players, stage, round }) {
   const playerId = player.id;
   const assistantPlayerId = `${player.id}-assistant`;
 
-  const { llmPromptRole, llmDemeanor } = game.get("treatment");
-  const llmPrompt = getLlmInstructions(game);
+  const { llmPromptRole, llmDemeanor, llmStartsFirst } = game.get("treatment");
   const { allowNoDeal, unilateralNoDeal } = getLlmNoDealBehavior(game);
+  const llmPrompt = player.get("llmInstructions");
 
   /**
    * @param {any[]} messages
    */
   function convertChatToOpenAIMessages(messages) {
-
     const mappedMessages = messages.map((message) => {
       const { type, agentType, text } = message;
       return {
@@ -208,12 +201,17 @@ export function ChatWithLLM({ game, player, players, stage, round }) {
       content: `${llmPrompt}. Your demeanor should be ${llmDemeanor}.`,
     });
 
-    const lastMessage = messages[messages.length - 1];
+    const lastMessage =
+      messages.length > 0 ? messages[messages.length - 1] : undefined;
 
     const hasUserProposedDeal =
-      lastMessage.agentType === "user" && lastMessage.type === "proposal";
+      lastMessage &&
+      lastMessage.agentType === "user" &&
+      lastMessage.type === "proposal";
     const hasUserProposedNoDeal =
-      lastMessage.agentType === "user" && lastMessage.type === "no-deal";
+      lastMessage &&
+      lastMessage.agentType === "user" &&
+      lastMessage.type === "no-deal";
 
     if (hasUserProposedDeal) {
       mappedMessages.push({
@@ -375,6 +373,15 @@ export function ChatWithLLM({ game, player, players, stage, round }) {
     const messages = game.get("messages") || [];
     await executeLlmTurn(messages);
   };
+
+  const isFirstTurn = (game.get("messages") || []).length === 0;
+
+  useEffect(() => {
+    if (isFirstTurn && llmStartsFirst) {
+      const messages = game.get("messages") || [];
+      executeLlmTurn(messages);
+    }
+  }, [isFirstTurn, llmStartsFirst]);
 
   return (
     <ChatCommon
