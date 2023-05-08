@@ -27,13 +27,13 @@ factors:
   - name: firstPlayerInstructions
     desc: Instructions for the first player. Currently this is always a human player
     values:
-      - value: "You are moving and would like to buy a table.  You saw an advertisement for a table that you are interested in.  You are about to meet with the seller to discuss the price.  Important facts:  1. The table is in excellent condition and you have already seen it.  2. The seller bought the table new from a local furniture store for $300.  3. The same furniture store offered to buy back the used table for $90.   Try to buy the table for as little money as possible. You do not have to reach an agreement. If you don't reach an agreement, you will buy the table from the furniture store for $300."
-      - value: "You and the other player must decide on a disciplinary action in a fictitious, controversial case in which a college basketball player bribed an instructor to change his grade on an exam, to maintain his eligibility on the team. You must agree on a choice for the following issues: (1) Student's Grade; (2) Student Suspension; (3) Student's Basketball Team; (4) Instructor Punishment;  (5) Instructor Future Position. Each issue has to do with the treatment of the athlete and the instructor. Please make sure to satisfy conflicting interests of the faculty, college administration, and athletic department when making your decisions."
+      - value: tableBuyer
+      - value: tableSeller
   - name: secondPlayerInstructions
     desc: Instructions for the second player (if exists). Currently this is always a human player, LLM instructions must be provided in the llmPrompt factor
     values:
-      - value: "You are moving and would like to sell a table that you no longer need.  You posted an advertisement and one possible buyer has contacted you. You are about to meet with this possible buyer to discuss the price.  Important facts:  1. The table is in excellent condition and has already been seen by the buyer.  2. You bought the table new from a local furniture store for $300.  3. The same furniture store offered to buy back the used table for $90.   Try to sell the table for as much money as possible. You do not have to reach an agreement. If you don't reach an agreement, you will sell the table to the furniture store for $90."
-      - value: "You and the other player must decide on a disciplinary action in a fictitious, controversial case in which a college basketball player bribed an instructor to change his grade on an exam, to maintain his eligibility on the team. You must agree on a choice for the following issues: (1) Student's Grade; (2) Student Suspension; (3) Student's Basketball Team; (4) Instructor Punishment;  (5) Instructor Future Position. Each issue has to do with the treatment of the athlete and the instructor. Please make sure to satisfy conflicting interests of the faculty, college administration, and athletic department when making your decisions."
+      - value: tableBuyer
+      - value: tableSeller
   - name: firstPlayerAllowNoDeal
     desc: Should the first player be allowed to end the game without a deal?
     values:
@@ -58,8 +58,8 @@ treatments:
   - name: HumanVsHuman
     factors:
       playerCount: 2
-      firstPlayerInstructions: "You are moving and would like to buy a table.  You saw an advertisement for a table that you are interested in.  You are about to meet with the seller to discuss the price.  Important facts:  1. The table is in excellent condition and you have already seen it.  2. The seller bought the table new from a local furniture store for $300.  3. The same furniture store offered to buy back the used table for $90.   Try to buy the table for as little money as possible. You do not have to reach an agreement. If you don't reach an agreement, you will buy the table from the furniture store for $300."
-      secondPlayerInstructions: "You are moving and would like to sell a table that you no longer need.  You posted an advertisement and one possible buyer has contacted you. You are about to meet with this possible buyer to discuss the price.  Important facts:  1. The table is in excellent condition and has already been seen by the buyer.  2. You bought the table new from a local furniture store for $300.  3. The same furniture store offered to buy back the used table for $90.   Try to sell the table for as much money as possible. You do not have to reach an agreement. If you don't reach an agreement, you will sell the table to the furniture store for $90."
+      firstPlayerInstructions: tableBuyer
+      secondPlayerInstructions: tableSeller
       firstPlayerAllowNoDeal: true
       secondPlayerAllowNoDeal: true
       firstPlayerUnilateralNoDeal: false
@@ -67,8 +67,8 @@ treatments:
   - name: HumanVsHuman - Seller first
     factors:
       playerCount: 2
-      firstPlayerInstructions: "You are moving and would like to sell a table that you no longer need.  You posted an advertisement and one possible buyer has contacted you. You are about to meet with this possible buyer to discuss the price.  Important facts:  1. The table is in excellent condition and has already been seen by the buyer.  2. You bought the table new from a local furniture store for $300.  3. The same furniture store offered to buy back the used table for $90.   Try to sell the table for as much money as possible. You do not have to reach an agreement. If you don't reach an agreement, you will sell the table to the furniture store for $90."
-      secondPlayerInstructions: "You are moving and would like to buy a table.  You saw an advertisement for a table that you are interested in.  You are about to meet with the seller to discuss the price.  Important facts:  1. The table is in excellent condition and you have already seen it.  2. The seller bought the table new from a local furniture store for $300.  3. The same furniture store offered to buy back the used table for $90.   Try to buy the table for as little money as possible. You do not have to reach an agreement. If you don't reach an agreement, you will buy the table from the furniture store for $300."
+      firstPlayerInstructions: tableSeller
+      secondPlayerInstructions: tableBuyer
       firstPlayerAllowNoDeal: true
       secondPlayerAllowNoDeal: true
       firstPlayerUnilateralNoDeal: false
@@ -76,8 +76,8 @@ treatments:
   - name: HumanVsLlm - Human buyer
     factors:
       playerCount: 1
-      firstPlayerInstructions: "You are moving and would like to buy a table.  You saw an advertisement for a table that you are interested in.  You are about to meet with the seller to discuss the price.  Important facts:  1. The table is in excellent condition and you have already seen it.  2. The seller bought the table new from a local furniture store for $300.  3. The same furniture store offered to buy back the used table for $90.   Try to buy the table for as little money as possible. You do not have to reach an agreement. If you don't reach an agreement, you will buy the table from the furniture store for $300."
-      secondPlayerInstructions: "You are moving and would like to sell a table that you no longer need.  You posted an advertisement and one possible buyer has contacted you. You are about to meet with this possible buyer to discuss the price.  Important facts:  1. The table is in excellent condition and has already been seen by the buyer.  2. You bought the table new from a local furniture store for $300.  3. The same furniture store offered to buy back the used table for $90.   Try to sell the table for as much money as possible. You do not have to reach an agreement. If you don't reach an agreement, you will sell the table to the furniture store for $90.   Persona guide: You should be very strategic. Think carefully about the offer made. Begin by asking if the user is interested in buying your table."
+      firstPlayerInstructions: tableBuyer
+      secondPlayerInstructions: tableSeller
       llmStartsFirst: false
       llmDemeanor: kind
       llmPromptRole: system
@@ -89,8 +89,8 @@ treatments:
   - name: HumanVsLlm - Human seller
     factors:
       playerCount: 1
-      firstPlayerInstructions: "You are moving and would like to sell a table that you no longer need.  You posted an advertisement and one possible buyer has contacted you. You are about to meet with this possible buyer to discuss the price.  Important facts:  1. The table is in excellent condition and has already been seen by the buyer.  2. You bought the table new from a local furniture store for $300.  3. The same furniture store offered to buy back the used table for $90.   Try to sell the table for as much money as possible. You do not have to reach an agreement. If you don't reach an agreement, you will sell the table to the furniture store for $90."
-      secondPlayerInstructions: "You are moving and would like to buy a table. You saw an advertisement for a table that you are interested in.  You are about to meet with the seller to discuss the price.  Important facts:  1. The table is in excellent condition and you have already seen it.  2. The seller bought the table new from a local furniture store for $300.  3. The same furniture store offered to buy back the used table for $90.   Try to buy the table for as little money as possible. You do not have to reach an agreement. If you don't reach an agreement, you will buy the table from the furniture store for $300.   Persona guide: You should be very strategic. Think carefully about the offer made."
+      firstPlayerInstructions: tableSeller
+      secondPlayerInstructions: tableBuyer
       llmStartsFirst: false
       llmDemeanor: kind
       llmPromptRole: system
@@ -102,8 +102,8 @@ treatments:
   - name: HumanVsLlm - Human seller - LLM cannot say NoDeal
     factors:
       playerCount: 1
-      firstPlayerInstructions: "You are moving and would like to sell a table that you no longer need.  You posted an advertisement and one possible buyer has contacted you. You are about to meet with this possible buyer to discuss the price.  Important facts:  1. The table is in excellent condition and has already been seen by the buyer.  2. You bought the table new from a local furniture store for $300.  3. The same furniture store offered to buy back the used table for $90.   Try to sell the table for as much money as possible. You do not have to reach an agreement. If you don't reach an agreement, you will sell the table to the furniture store for $90."
-      secondPlayerInstructions: "You are moving and would like to buy a table. You saw an advertisement for a table that you are interested in.  You are about to meet with the seller to discuss the price.  Important facts:  1. The table is in excellent condition and you have already seen it.  2. The seller bought the table new from a local furniture store for $300.  3. The same furniture store offered to buy back the used table for $90.   Try to buy the table for as little money as possible. You do not have to reach an agreement. If you don't reach an agreement, you will buy the table from the furniture store for $300.   Persona guide: You should be very strategic. Think carefully about the offer made."
+      firstPlayerInstructions: tableSeller
+      secondPlayerInstructions: tableBuyer
       llmStartsFirst: false
       llmDemeanor: kind
       llmPromptRole: system
@@ -115,8 +115,8 @@ treatments:
   - name: HumanVsLlm - Human buyer - Human cannot say NoDeal
     factors:
       playerCount: 1
-      firstPlayerInstructions: "You are moving and would like to buy a table.  You saw an advertisement for a table that you are interested in.  You are about to meet with the seller to discuss the price.  Important facts:  1. The table is in excellent condition and you have already seen it.  2. The seller bought the table new from a local furniture store for $300.  3. The same furniture store offered to buy back the used table for $90.   Try to buy the table for as little money as possible. You do not have to reach an agreement. If you don't reach an agreement, you will buy the table from the furniture store for $300."
-      secondPlayerInstructions: "You are moving and would like to sell a table that you no longer need.  You posted an advertisement and one possible buyer has contacted you. You are about to meet with this possible buyer to discuss the price.  Important facts:  1. The table is in excellent condition and has already been seen by the buyer.  2. You bought the table new from a local furniture store for $300.  3. The same furniture store offered to buy back the used table for $90.   Try to sell the table for as much money as possible. You do not have to reach an agreement. If you don't reach an agreement, you will sell the table to the furniture store for $90.   Persona guide: You should be very strategic. Think carefully about the offer made. Begin by asking if the user is interested in buying your table."
+      firstPlayerInstructions: tableBuyer
+      secondPlayerInstructions: tableSeller
       llmStartsFirst: false
       llmDemeanor: kind
       llmPromptRole: system
@@ -128,8 +128,8 @@ treatments:
   - name: LlmVsHuman - Llm buyer
     factors:
       playerCount: 1
-      firstPlayerInstructions: "You are moving and would like to buy a table.  You saw an advertisement for a table that you are interested in.  You are about to meet with the seller to discuss the price.  Important facts:  1. The table is in excellent condition and you have already seen it.  2. The seller bought the table new from a local furniture store for $300.  3. The same furniture store offered to buy back the used table for $90.   Try to buy the table for as little money as possible. You do not have to reach an agreement. If you don't reach an agreement, you will buy the table from the furniture store for $300."
-      secondPlayerInstructions: "You are moving and would like to sell a table that you no longer need.  You posted an advertisement and one possible buyer has contacted you. You are about to meet with this possible buyer to discuss the price.  Important facts:  1. The table is in excellent condition and has already been seen by the buyer.  2. You bought the table new from a local furniture store for $300.  3. The same furniture store offered to buy back the used table for $90.   Try to sell the table for as much money as possible. You do not have to reach an agreement. If you don't reach an agreement, you will sell the table to the furniture store for $90.   Persona guide: You should be very strategic. Think carefully about the offer made. Begin by asking if the user is interested in buying your table."
+      firstPlayerInstructions: tableBuyer
+      secondPlayerInstructions: tableSeller
       llmStartsFirst: true
       llmDemeanor: kind
       llmPromptRole: system
@@ -141,8 +141,8 @@ treatments:
   - name: LlmVsHuman - Llm seller
     factors:
       playerCount: 1
-      firstPlayerInstructions: "You are moving and would like to sell a table that you no longer need.  You posted an advertisement and one possible buyer has contacted you. You are about to meet with this possible buyer to discuss the price.  Important facts:  1. The table is in excellent condition and has already been seen by the buyer.  2. You bought the table new from a local furniture store for $300.  3. The same furniture store offered to buy back the used table for $90.   Try to sell the table for as much money as possible. You do not have to reach an agreement. If you don't reach an agreement, you will sell the table to the furniture store for $90.   Persona guide: You should be very strategic. Think carefully about the offer made. Begin by asking if the user is interested in buying your table."
-      secondPlayerInstructions: "You are moving and would like to buy a table.  You saw an advertisement for a table that you are interested in.  You are about to meet with the seller to discuss the price.  Important facts:  1. The table is in excellent condition and you have already seen it.  2. The seller bought the table new from a local furniture store for $300.  3. The same furniture store offered to buy back the used table for $90.   Try to buy the table for as little money as possible. You do not have to reach an agreement. If you don't reach an agreement, you will buy the table from the furniture store for $300."
+      firstPlayerInstructions: tableSeller
+      secondPlayerInstructions: tableBuyer
       llmStartsFirst: true
       llmDemeanor: kind
       llmPromptRole: system

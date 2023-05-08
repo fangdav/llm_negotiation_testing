@@ -257,7 +257,11 @@ function Instructions({ instructions = "" }) {
           {shown ? "Hide" : "Show"}
         </button>
       </div>
-      {shown && <p className="overflow-y-auto">{instructions}</p>}
+      {shown && (
+        <p className="overflow-y-auto whitespace-pre-line break-words">
+          {instructions}
+        </p>
+      )}
     </div>
   );
 }

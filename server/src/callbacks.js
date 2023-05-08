@@ -1,15 +1,23 @@
 import { ClassicListenersCollector } from "@empirica/core/admin/classic";
+import instructions from "./instructions";
 export const Empirica = new ClassicListenersCollector();
 
 Empirica.onGameStart(({ game }) => {
   const treatment = game.get("treatment");
 
   const {
-    firstPlayerInstructions,
-    secondPlayerInstructions,
+    firstPlayerInstructions: firstPlayerInstructionsShort,
+    secondPlayerInstructions: secondPlayerInstructionsShort,
     llmStartsFirst,
     playerCount,
   } = treatment;
+
+  const firstPlayerInstructions =  instructions[firstPlayerInstructionsShort];
+  const secondPlayerInstructions = instructions[secondPlayerInstructionsShort];
+
+  if (!firstPlayerInstructions || !secondPlayerInstructions) {
+    throw new Error("Invalid instructions short code");
+  }
 
   const multiplayer = playerCount === 2;
 
