@@ -151,20 +151,13 @@ const extractMessageProposal = (message) => {
 };
 
 const getLlmNoDealBehavior = (game) => {
-  const {
-    firstPlayerAllowNoDeal,
-    secondPlayerAllowNoDeal,
-    firstPlayerUnilateralNoDeal,
-    secondPlayerUnilateralNoDeal,
-    llmStartsFirst,
-  } = game.get("treatment");
+  const { firstPlayerNoDeal, secondPlayerNoDeal, llmStartsFirst } =
+    game.get("treatment");
 
-  const allowNoDeal = llmStartsFirst
-    ? firstPlayerAllowNoDeal
-    : secondPlayerAllowNoDeal;
-  const unilateralNoDeal = llmStartsFirst
-    ? firstPlayerUnilateralNoDeal
-    : secondPlayerUnilateralNoDeal;
+  const playerNoDeal = llmStartsFirst ? firstPlayerNoDeal : secondPlayerNoDeal;
+
+  const allowNoDeal = playerNoDeal !== "not-allowed";
+  const unilateralNoDeal = playerNoDeal === "allowed-unilateral";
 
   return {
     allowNoDeal,

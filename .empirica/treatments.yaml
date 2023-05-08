@@ -34,45 +34,33 @@ factors:
     values:
       - value: tableBuyer
       - value: tableSeller
-  - name: firstPlayerAllowNoDeal
+  - name: firstPlayerNoDeal
     desc: Should the first player be allowed to end the game without a deal?
     values:
-      - value: true
-      - value: false
-  - name: secondPlayerAllowNoDeal
+      - value: allowed-mutual
+      - value: allowed-unilateral
+      - value: not-allowed
+  - name: secondPlayerNoDeal
     desc: Should the second player be allowed to end the game without a deal?
     values:
-      - value: true
-      - value: false
-  - name: firstPlayerUnilateralNoDeal
-    desc: Should the first player be allowed to end the game without a deal unilaterally?
-    values:
-      - value: true
-      - value: false
-  - name: secondPlayerUnilateralNoDeal
-    desc: Should the second player be allowed to end the game without a deal unilaterally?
-    values:
-      - value: true
-      - value: false
+      - value: allowed-mutual
+      - value: allowed-unilateral
+      - value: not-allowed
 treatments:
   - name: HumanVsHuman
     factors:
       playerCount: 2
       firstPlayerInstructions: tableBuyer
       secondPlayerInstructions: tableSeller
-      firstPlayerAllowNoDeal: true
-      secondPlayerAllowNoDeal: true
-      firstPlayerUnilateralNoDeal: false
-      secondPlayerUnilateralNoDeal: false
+      firstPlayerNoDeal: allowed-mutual
+      secondPlayerNoDeal: allowed-mutual
   - name: HumanVsHuman - Seller first
     factors:
       playerCount: 2
       firstPlayerInstructions: tableSeller
       secondPlayerInstructions: tableBuyer
-      firstPlayerAllowNoDeal: true
-      secondPlayerAllowNoDeal: true
-      firstPlayerUnilateralNoDeal: false
-      secondPlayerUnilateralNoDeal: false
+      firstPlayerNoDeal: allowed-mutual
+      secondPlayerNoDeal: allowed-mutual
   - name: HumanVsLlm - Human buyer
     factors:
       playerCount: 1
@@ -82,10 +70,8 @@ treatments:
       llmDemeanor: kind
       llmPromptRole: system
       llmTemperature: 0.2
-      firstPlayerAllowNoDeal: true
-      secondPlayerAllowNoDeal: true
-      firstPlayerUnilateralNoDeal: false
-      secondPlayerUnilateralNoDeal: false
+      firstPlayerNoDeal: allowed-mutual
+      secondPlayerNoDeal: allowed-mutual
   - name: HumanVsLlm - Human seller
     factors:
       playerCount: 1
@@ -95,10 +81,8 @@ treatments:
       llmDemeanor: kind
       llmPromptRole: system
       llmTemperature: 0.2
-      firstPlayerAllowNoDeal: true
-      secondPlayerAllowNoDeal: true
-      firstPlayerUnilateralNoDeal: false
-      secondPlayerUnilateralNoDeal: false
+      firstPlayerNoDeal: allowed-mutual
+      secondPlayerNoDeal: allowed-mutual
   - name: HumanVsLlm - Human seller - LLM cannot say NoDeal
     factors:
       playerCount: 1
@@ -108,10 +92,8 @@ treatments:
       llmDemeanor: kind
       llmPromptRole: system
       llmTemperature: 0.2
-      firstPlayerAllowNoDeal: true
-      secondPlayerAllowNoDeal: false
-      firstPlayerUnilateralNoDeal: false
-      secondPlayerUnilateralNoDeal: false
+      firstPlayerNoDeal: allowed-mutual
+      secondPlayerNoDeal: not-allowed
   - name: HumanVsLlm - Human buyer - Human cannot say NoDeal
     factors:
       playerCount: 1
@@ -121,10 +103,8 @@ treatments:
       llmDemeanor: kind
       llmPromptRole: system
       llmTemperature: 0.2
-      firstPlayerAllowNoDeal: false
-      secondPlayerAllowNoDeal: true
-      firstPlayerUnilateralNoDeal: false
-      secondPlayerUnilateralNoDeal: false
+      firstPlayerNoDeal: not-allowed
+      secondPlayerNoDeal: allowed-mutual
   - name: LlmVsHuman - Llm buyer
     factors:
       playerCount: 1
@@ -134,10 +114,8 @@ treatments:
       llmDemeanor: kind
       llmPromptRole: system
       llmTemperature: 0.2
-      firstPlayerAllowNoDeal: true
-      secondPlayerAllowNoDeal: true
-      firstPlayerUnilateralNoDeal: false
-      secondPlayerUnilateralNoDeal: false
+      firstPlayerNoDeal: allowed-mutual
+      secondPlayerNoDeal: allowed-mutual
   - name: LlmVsHuman - Llm seller
     factors:
       playerCount: 1
@@ -147,7 +125,16 @@ treatments:
       llmDemeanor: kind
       llmPromptRole: system
       llmTemperature: 0.2
-      firstPlayerAllowNoDeal: true
-      secondPlayerAllowNoDeal: true
-      firstPlayerUnilateralNoDeal: false
-      secondPlayerUnilateralNoDeal: false
+      firstPlayerNoDeal: allowed-mutual
+      secondPlayerNoDeal: allowed-mutual
+  - name: LlmVsHuman - Llm seller - Llm can end game unilaterally
+    factors:
+      playerCount: 1
+      firstPlayerInstructions: tableSeller
+      secondPlayerInstructions: tableBuyer
+      llmStartsFirst: true
+      llmDemeanor: kind
+      llmPromptRole: system
+      llmTemperature: 0.2
+      firstPlayerNoDeal: allowed-unilateral
+      secondPlayerNoDeal: allowed-mutual

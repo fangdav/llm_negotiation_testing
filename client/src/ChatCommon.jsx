@@ -4,21 +4,13 @@ import { Chat } from "./components/Chat";
 import { randID } from "./utils";
 
 const getHumanNoDealBehavior = (game, player, players) => {
-  const {
-    firstPlayerAllowNoDeal,
-    secondPlayerAllowNoDeal,
-    firstPlayerUnilateralNoDeal,
-    secondPlayerUnilateralNoDeal,
-  } = game.get("treatment");
-
+  const { firstPlayerNoDeal, secondPlayerNoDeal } = game.get("treatment");
+  
   const isFirst = players[0].id === player.id;
+  const playerNoDeal = isFirst ? firstPlayerNoDeal : secondPlayerNoDeal;
 
-  const allowNoDeal = isFirst
-    ? firstPlayerAllowNoDeal
-    : secondPlayerAllowNoDeal;
-  const unilateralNoDeal = isFirst
-    ? firstPlayerUnilateralNoDeal
-    : secondPlayerUnilateralNoDeal;
+  const allowNoDeal = playerNoDeal !== "not-allowed";
+  const unilateralNoDeal = playerNoDeal === "allowed-unilateral";
 
   return {
     allowNoDeal,
