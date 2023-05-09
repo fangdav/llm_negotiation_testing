@@ -25,12 +25,12 @@ factors:
       - value: user
       - value: system
   - name: firstPlayerInstructions
-    desc: Instructions for the first player. Currently this is always a human player
+    desc: Instructions for the first player.
     values:
       - value: tableBuyer
       - value: tableSeller
   - name: secondPlayerInstructions
-    desc: Instructions for the second player (if exists). Currently this is always a human player, LLM instructions must be provided in the llmPrompt factor
+    desc: Instructions for the second player.
     values:
       - value: tableBuyer
       - value: tableSeller
