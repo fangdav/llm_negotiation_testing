@@ -3,6 +3,7 @@ import React, { useEffect } from "react";
 import { ChatCommon } from "./ChatCommon";
 import { CHAT_API_PORT } from "./constants";
 import { randID } from "./utils";
+import useGameMechanics from "./useGameMechanics";
 
 const DEAL_REACHED = "[DEAL REACHED]";
 const NO_DEAL = "[NO DEAL]";
@@ -13,9 +14,7 @@ const DEAL_REJECTED = "[DEAL REJECTED]";
 const NO_DEAL_ACCEPTED = "[NO DEAL ACCEPTED]";
 const NO_DEAL_REJECTED = "[NO DEAL REJECTED]";
 
-/**
- * @param {boolean} allowNoDeal
- */
+/** @param {boolean} allowNoDeal */
 const proposeDealPrompt = (
   allowNoDeal
 ) => `When a deal has been reached, output a single line that contains a string ${DEAL_REACHED} and the agreed upon amount, for example "${DEAL_REACHED} $200", if the agreed upon amount is $200.
@@ -46,29 +45,35 @@ If you reject the no deal, continue negotiating.`;
 
 /**
  * @param {string} message
- * @return {{
- *    type: 'message',
- *    text: string,
- *  } | {
- *    type: 'proposal',
- *    text: string,
- *    proposal: number,
- *  } | {
- *    type: 'no-deal',
- *    text: string,
- *  } | {
- *   type: 'deal-accepted',
- *   text: string,
- *  } | {
- *    type: 'deal-rejected',
- *    text: string,
- *  } | {
- *    type: 'no-deal-accepted',
- *     text: string,
- *  } | {
- *    type: 'no-deal-rejected',
- *    text: string,
- * }}
+ * @returns {| {
+ *       type: "message";
+ *       text: string;
+ *     }
+ *   | {
+ *       type: "proposal";
+ *       text: string;
+ *       proposal: number;
+ *     }
+ *   | {
+ *       type: "no-deal";
+ *       text: string;
+ *     }
+ *   | {
+ *       type: "deal-accepted";
+ *       text: string;
+ *     }
+ *   | {
+ *       type: "deal-rejected";
+ *       text: string;
+ *     }
+ *   | {
+ *       type: "no-deal-accepted";
+ *       text: string;
+ *     }
+ *   | {
+ *       type: "no-deal-rejected";
+ *       text: string;
+ *     }}
  */
 const extractMessageProposal = (message) => {
   const hasProposal = message.includes(DEAL_REACHED);
@@ -173,9 +178,10 @@ export function ChatWithLLM({ game, player, players, stage, round }) {
   const { allowNoDeal, unilateralNoDeal } = getLlmNoDealBehavior(game);
   const llmPrompt = player.get("llmInstructions");
 
-  /**
-   * @param {any[]} messages
-   */
+  const { messages, setMessages, endWithDeal, endWithNoDeal, switchTurns } =
+    useGameMechanics();
+
+  /** @param {any[]} messages */
   function convertChatToOpenAIMessages(messages) {
     const mappedMessages = messages.map((message) => {
       const { type, agentType, text } = message;
@@ -308,70 +314,61 @@ export function ChatWithLLM({ game, player, players, stage, round }) {
         });
       }
 
-      game.set("messages", messagesWithLLMResponse);
+      setMessages(messagesWithLLMResponse);
 
       // TODO: unify this with the code in ChatCommon
       if (extracted.type === "deal-accepted") {
-        // We might want to save this data to a stage or a round instead if the game can have multiple rounds
-        game.set("result", "deal-reached");
-        game.set("price", lastMessage.proposal);
-        player.stage.set("submit", true);
+        endWithDeal(lastMessage.proposal);
       } else if (
         extracted.type === "no-deal-accepted" ||
         (extracted.type === "no-deal" && unilateralNoDeal)
       ) {
-        // We might want to save this data to a stage or a round instead if the game can have multiple rounds
-        game.set("result", "no-deal");
-        player.stage.set("submit", true);
+        endWithNoDeal();
       } else {
-        game.set("currentTurnPlayerId", playerId);
+        switchTurns();
       }
     } catch (err) {
       // Make sure that the turn is returned to the player if there is an error
-      game.set("currentTurnPlayerId", playerId);
+      switchTurns();
       console.error(err);
       return;
     }
   };
 
-  const onNewMessage = async (newMessage) => {
-    const messages = game.get("messages") || [];
-
-    const text = newMessage.trim();
+  const onNewMessage = async (newMessageText) => {
+    const text = newMessageText.trim();
 
     if (text.length === 0) {
       return;
     }
 
-    const messagesWithUserMessage = [
-      ...messages,
-      {
-        type: "message",
-        text,
-        playerId,
-        gamePhase: `Round ${round.index} - ${stage.name}`,
-        id: randID(),
-        timestamp: Date.now(),
-        agentType: "user",
-      },
-    ];
-    game.set("messages", messagesWithUserMessage);
+    /** @type {import("./useGameMechanics").Message} */
+    const newMessage = {
+      type: "message",
+      text,
+      playerId,
+      gamePhase: `Round ${round.index} - ${stage.name}`,
+      id: randID(),
+      timestamp: Date.now(),
+      agentType: "user",
+    };
 
-    game.set("currentTurnPlayerId", assistantPlayerId);
+    const messagesWithUserMessage = [...messages, newMessage];
+    setMessages(messagesWithUserMessage);
+
+    switchTurns();
 
     await executeLlmTurn(messagesWithUserMessage);
   };
 
   const onNewProposalOrNoDeal = async () => {
-    const messages = game.get("messages") || [];
     await executeLlmTurn(messages);
   };
 
-  const isFirstTurn = (game.get("messages") || []).length === 0;
+  const isFirstTurn = messages.length === 0;
 
   useEffect(() => {
     if (isFirstTurn && llmStartsFirst) {
-      const messages = game.get("messages") || [];
       executeLlmTurn(messages);
     }
   }, [isFirstTurn, llmStartsFirst]);
@@ -386,8 +383,6 @@ export function ChatWithLLM({ game, player, players, stage, round }) {
       onNewMessage={onNewMessage}
       onNewProposal={onNewProposalOrNoDeal}
       onNewNoDeal={onNewProposalOrNoDeal}
-      playerId={playerId}
-      otherPlayerId={assistantPlayerId}
     />
   );
 }

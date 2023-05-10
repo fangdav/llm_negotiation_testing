@@ -1,140 +1,153 @@
 factors:
-  - name: playerCount
-    desc: playerCount determines the number of Players are in a Game. 1 is a chat with an LLM, 2 is a chat with another Player
-    values:
-      - value: 1
-      - value: 2
-  - name: llmTemperature
-    values:
-      - value: 0
-      - value: 0.2
-  - name: llmDemeanor
-    values:
-      - value: kind
-      - value: mean
-      - value: conciliatory
-      - value: agreeable
-      - value: a pushover
-  - name: llmStartsFirst
-    values:
-      - value: true
-      - value: false
-  - name: llmPromptRole
-    desc: Should the LLM priming be delivered as a system prompt, or a user prompt? See OpenAI docs -- as of gpt-turbo-3.5-0301, it's recommended to use "user" roles for the primes, and this seems to work from initial testing.
-    values:
-      - value: user
-      - value: system
-  - name: firstPlayerInstructions
-    desc: Instructions for the first player.
-    values:
-      - value: tableBuyer
-      - value: tableSeller
-  - name: secondPlayerInstructions
-    desc: Instructions for the second player.
-    values:
-      - value: tableBuyer
-      - value: tableSeller
-  - name: firstPlayerNoDeal
-    desc: Should the first player be allowed to end the game without a deal?
-    values:
-      - value: allowed-mutual
-      - value: allowed-unilateral
-      - value: not-allowed
-  - name: secondPlayerNoDeal
-    desc: Should the second player be allowed to end the game without a deal?
-    values:
-      - value: allowed-mutual
-      - value: allowed-unilateral
-      - value: not-allowed
+    - name: playerCount
+      desc: playerCount determines the number of Players are in a Game. 1 is a chat with an LLM, 2 is a chat with another Player
+      values:
+        - value: 1
+        - value: 2
+    - name: llmTemperature
+      values:
+        - value: 0
+        - value: 0.2
+    - name: llmDemeanor
+      values:
+        - value: kind
+        - value: mean
+        - value: conciliatory
+        - value: agreeable
+        - value: a pushover
+    - name: llmStartsFirst
+      values:
+        - value: true
+        - value: false
+    - name: llmPromptRole
+      desc: Should the LLM priming be delivered as a system prompt, or a user prompt? See OpenAI docs -- as of gpt-turbo-3.5-0301, it's recommended to use "user" roles for the primes, and this seems to work from initial testing.
+      values:
+        - value: user
+        - value: system
+    - name: firstPlayerInstructions
+      desc: Instructions for the first player.
+      values:
+        - value: tableBuyer
+        - value: tableSeller
+    - name: secondPlayerInstructions
+      desc: Instructions for the second player.
+      values:
+        - value: tableBuyer
+        - value: tableSeller
+    - name: firstPlayerNoDeal
+      desc: Should the first player be allowed to end the game without a deal?
+      values:
+        - value: allowed-mutual
+        - value: allowed-unilateral
+        - value: not-allowed
+    - name: secondPlayerNoDeal
+      desc: Should the second player be allowed to end the game without a deal?
+      values:
+        - value: allowed-mutual
+        - value: allowed-unilateral
+        - value: not-allowed
+    - name: allowOutOfOrder
+      desc: Should players be allowed to send messages out of order?
+      values:
+        - value: true
+        - value: false
 treatments:
-  - name: HumanVsHuman
-    factors:
-      playerCount: 2
-      firstPlayerInstructions: tableBuyer
-      secondPlayerInstructions: tableSeller
-      firstPlayerNoDeal: allowed-mutual
-      secondPlayerNoDeal: allowed-mutual
-  - name: HumanVsHuman - Seller first
-    factors:
-      playerCount: 2
-      firstPlayerInstructions: tableSeller
-      secondPlayerInstructions: tableBuyer
-      firstPlayerNoDeal: allowed-mutual
-      secondPlayerNoDeal: allowed-mutual
-  - name: HumanVsLlm - Human buyer
-    factors:
-      playerCount: 1
-      firstPlayerInstructions: tableBuyer
-      secondPlayerInstructions: tableSeller
-      llmStartsFirst: false
-      llmDemeanor: kind
-      llmPromptRole: system
-      llmTemperature: 0.2
-      firstPlayerNoDeal: allowed-mutual
-      secondPlayerNoDeal: allowed-mutual
-  - name: HumanVsLlm - Human seller
-    factors:
-      playerCount: 1
-      firstPlayerInstructions: tableSeller
-      secondPlayerInstructions: tableBuyer
-      llmStartsFirst: false
-      llmDemeanor: kind
-      llmPromptRole: system
-      llmTemperature: 0.2
-      firstPlayerNoDeal: allowed-mutual
-      secondPlayerNoDeal: allowed-mutual
-  - name: HumanVsLlm - Human seller - LLM cannot say NoDeal
-    factors:
-      playerCount: 1
-      firstPlayerInstructions: tableSeller
-      secondPlayerInstructions: tableBuyer
-      llmStartsFirst: false
-      llmDemeanor: kind
-      llmPromptRole: system
-      llmTemperature: 0.2
-      firstPlayerNoDeal: allowed-mutual
-      secondPlayerNoDeal: not-allowed
-  - name: HumanVsLlm - Human buyer - Human cannot say NoDeal
-    factors:
-      playerCount: 1
-      firstPlayerInstructions: tableBuyer
-      secondPlayerInstructions: tableSeller
-      llmStartsFirst: false
-      llmDemeanor: kind
-      llmPromptRole: system
-      llmTemperature: 0.2
-      firstPlayerNoDeal: not-allowed
-      secondPlayerNoDeal: allowed-mutual
-  - name: LlmVsHuman - Llm buyer
-    factors:
-      playerCount: 1
-      firstPlayerInstructions: tableBuyer
-      secondPlayerInstructions: tableSeller
-      llmStartsFirst: true
-      llmDemeanor: kind
-      llmPromptRole: system
-      llmTemperature: 0.2
-      firstPlayerNoDeal: allowed-mutual
-      secondPlayerNoDeal: allowed-mutual
-  - name: LlmVsHuman - Llm seller
-    factors:
-      playerCount: 1
-      firstPlayerInstructions: tableSeller
-      secondPlayerInstructions: tableBuyer
-      llmStartsFirst: true
-      llmDemeanor: kind
-      llmPromptRole: system
-      llmTemperature: 0.2
-      firstPlayerNoDeal: allowed-mutual
-      secondPlayerNoDeal: allowed-mutual
-  - name: LlmVsHuman - Llm seller - Llm can end game unilaterally
-    factors:
-      playerCount: 1
-      firstPlayerInstructions: tableSeller
-      secondPlayerInstructions: tableBuyer
-      llmStartsFirst: true
-      llmDemeanor: kind
-      llmPromptRole: system
-      llmTemperature: 0.2
-      firstPlayerNoDeal: allowed-unilateral
-      secondPlayerNoDeal: allowed-mutual
+    - name: HumanVsHuman
+      factors:
+        firstPlayerInstructions: tableBuyer
+        firstPlayerNoDeal: allowed-mutual
+        playerCount: 2
+        secondPlayerInstructions: tableSeller
+        secondPlayerNoDeal: allowed-mutual
+    - name: HumanVsHuman - Seller first
+      factors:
+        firstPlayerInstructions: tableSeller
+        firstPlayerNoDeal: allowed-mutual
+        playerCount: 2
+        secondPlayerInstructions: tableBuyer
+        secondPlayerNoDeal: allowed-mutual
+    - name: HumanVsLlm - Human buyer
+      factors:
+        firstPlayerInstructions: tableBuyer
+        firstPlayerNoDeal: allowed-mutual
+        llmDemeanor: kind
+        llmPromptRole: system
+        llmStartsFirst: false
+        llmTemperature: 0.2
+        playerCount: 1
+        secondPlayerInstructions: tableSeller
+        secondPlayerNoDeal: allowed-mutual
+    - name: HumanVsLlm - Human seller
+      factors:
+        firstPlayerInstructions: tableSeller
+        firstPlayerNoDeal: allowed-mutual
+        llmDemeanor: kind
+        llmPromptRole: system
+        llmStartsFirst: false
+        llmTemperature: 0.2
+        playerCount: 1
+        secondPlayerInstructions: tableBuyer
+        secondPlayerNoDeal: allowed-mutual
+    - name: HumanVsLlm - Human seller - LLM cannot say NoDeal
+      factors:
+        firstPlayerInstructions: tableSeller
+        firstPlayerNoDeal: allowed-mutual
+        llmDemeanor: kind
+        llmPromptRole: system
+        llmStartsFirst: false
+        llmTemperature: 0.2
+        playerCount: 1
+        secondPlayerInstructions: tableBuyer
+        secondPlayerNoDeal: not-allowed
+    - name: HumanVsLlm - Human buyer - Human cannot say NoDeal
+      factors:
+        firstPlayerInstructions: tableBuyer
+        firstPlayerNoDeal: not-allowed
+        llmDemeanor: kind
+        llmPromptRole: system
+        llmStartsFirst: false
+        llmTemperature: 0.2
+        playerCount: 1
+        secondPlayerInstructions: tableSeller
+        secondPlayerNoDeal: allowed-mutual
+    - name: LlmVsHuman - Llm buyer
+      factors:
+        firstPlayerInstructions: tableBuyer
+        firstPlayerNoDeal: allowed-mutual
+        llmDemeanor: kind
+        llmPromptRole: system
+        llmStartsFirst: true
+        llmTemperature: 0.2
+        playerCount: 1
+        secondPlayerInstructions: tableSeller
+        secondPlayerNoDeal: allowed-mutual
+    - name: LlmVsHuman - Llm seller
+      factors:
+        firstPlayerInstructions: tableSeller
+        firstPlayerNoDeal: allowed-mutual
+        llmDemeanor: kind
+        llmPromptRole: system
+        llmStartsFirst: true
+        llmTemperature: 0.2
+        playerCount: 1
+        secondPlayerInstructions: tableBuyer
+        secondPlayerNoDeal: allowed-mutual
+    - name: LlmVsHuman - Llm seller - Llm can end game unilaterally
+      factors:
+        firstPlayerInstructions: tableSeller
+        firstPlayerNoDeal: allowed-unilateral
+        llmDemeanor: kind
+        llmPromptRole: system
+        llmStartsFirst: true
+        llmTemperature: 0.2
+        playerCount: 1
+        secondPlayerInstructions: tableBuyer
+        secondPlayerNoDeal: allowed-mutual
+    - name: HumanVsHuman - OutOfOrder
+      factors:
+        allowOutOfOrder: true
+        firstPlayerInstructions: tableBuyer
+        firstPlayerNoDeal: allowed-mutual
+        playerCount: 2
+        secondPlayerInstructions: tableSeller
+        secondPlayerNoDeal: allowed-mutual
