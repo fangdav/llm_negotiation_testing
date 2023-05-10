@@ -378,7 +378,7 @@ export function ChatWithLLM({ game, player, players, stage, round }) {
       }
     } catch (err) {
       // Make sure that the turn is returned to the player if there is an error
-      switchTurns();
+      switchTurns(true);
       console.error(err);
       return;
     }
