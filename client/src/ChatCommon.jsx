@@ -140,14 +140,16 @@ export function ChatCommon({
         type: "no-deal",
         noDealStatus: "pending",
         playerId,
-        text: "",
+        text: `Proposed to end without a deal`,
         gamePhase: `Round ${round.index} - ${stage.name}`,
         id: randID(),
         timestamp: Date.now(),
         agentType: "user",
       };
 
-      setMessages([...messages, newMessage]);
+      const messagesWithNoDeal = [...messages, newMessage];
+
+      setMessages(messagesWithNoDeal);
 
       if (unilateralNoDeal) {
         endWithDeal();
@@ -155,7 +157,7 @@ export function ChatCommon({
         switchTurns();
       }
 
-      onNewNoDealImpl?.();
+      onNewNoDealImpl?.(messagesWithNoDeal);
     } catch (err) {
       console.error(err);
       return;
@@ -171,7 +173,7 @@ export function ChatCommon({
       /** @type {import("./useGameMechanics").Message} */
       const newMessage = {
         type: "proposal",
-        text: "",
+        text: `Proposed a deal: ${proposal}`,
         proposal,
         proposalStatus: "pending",
         playerId,
@@ -180,10 +182,13 @@ export function ChatCommon({
         timestamp: Date.now(),
         agentType: "user",
       };
-      setMessages([...messages, newMessage]);
+
+      const messagesWithProposal = [...messages, newMessage];
+
+      setMessages(messagesWithProposal);
       switchTurns();
 
-      onNewProposalImpl?.(proposal);
+      onNewProposalImpl?.(messagesWithProposal);
     } catch (err) {
       console.error(err);
       return;
