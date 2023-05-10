@@ -1,5 +1,5 @@
 // @ts-check
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { Avatar } from "./Avatar";
 import { Button } from "./Button";
 import { CHAT_RESPONSIVE_COLUMNS } from "../constants";
@@ -13,28 +13,31 @@ export function Chat({
   onNewNoDeal,
   busy,
   waitingOnOtherPlayer,
+  otherPlayerId,
+  otherPlayerTyping,
   onAccept,
   onReject,
   onEnd,
   onContinue,
 }) {
   // Auto-scroll for the chat
-  /**
-   * @type {React.MutableRefObject<HTMLDivElement>}
-   */
+  /** @type {React.MutableRefObject<any[]>} */
   const prevMessages = useRef(messages);
-  /**
-   * @type {React.MutableRefObject<HTMLDivElement>}
-   */
+  /** @type {React.MutableRefObject<boolean>} */
+  const prevOtherPlayerTyping = useRef(otherPlayerTyping);
+  /** @type {React.MutableRefObject<HTMLDivElement>} */
   const messagesContainerRef = useRef();
   useEffect(() => {
-    if (prevMessages.current !== messages) {
+    if (
+      prevMessages.current !== messages ||
+      prevOtherPlayerTyping.current !== otherPlayerTyping
+    ) {
       // @ts-ignore
       messagesContainerRef.current.scrollTop =
         messagesContainerRef.current.scrollHeight;
     }
     prevMessages.current = messages;
-  }, [messages]);
+  }, [messages, otherPlayerTyping]);
 
   const [inputMode, setInputMode] = useState("message");
 
@@ -54,7 +57,10 @@ export function Chat({
       <Instructions instructions={instructions} />
       <div className="rounded-2xl outline outline-2 outline-gray-300 pb-2 flex-grow flex flex-col justify-end font-mono bg-white/95 max-h-full">
         <div className="overflow-auto p-2 flex-grow" ref={messagesContainerRef}>
-          <Messages messages={messages} />
+          <Messages
+            messages={messages}
+            typingPlayerId={otherPlayerTyping ? otherPlayerId : undefined}
+          />
         </div>
         <div className="px-2">
           {!waitingOnOtherPlayer &&
@@ -189,6 +195,19 @@ function TextMessage({ message, maxSize }) {
   );
 }
 
+function TypingIndicator({ playerId }) {
+  return (
+    <div className="p-2 flex items-start space-x-2">
+      <div className="w-6 h-6 flex-shrink-0">
+        <Avatar playerId={playerId} />
+      </div>
+      <div>
+        <div className="text-gray-500 text-sm">is typing...</div>
+      </div>
+    </div>
+  );
+}
+
 function ButtonsContainer({ children }) {
   return <div className="grid grid-flow-col gap-x-2 w-full">{children}</div>;
 }
@@ -266,14 +285,9 @@ function Instructions({ instructions = "" }) {
   );
 }
 
-function Messages({ messages, maxSize = 0 }) {
+function Messages({ messages, maxSize = 0, typingPlayerId }) {
   return (
     <>
-      {messages.length === 0 && (
-        <div className="h-full flex items-center justify-center">
-          <p className="p-8 text-gray-500">No messages yet</p>
-        </div>
-      )}
       {messages.length > 0 &&
         messages.map((message, i) => (
           <React.Fragment key={i}>
@@ -292,6 +306,12 @@ function Messages({ messages, maxSize = 0 }) {
             )}
           </React.Fragment>
         ))}
+      {!!typingPlayerId && <TypingIndicator playerId={typingPlayerId} />}
+      {messages.length === 0 && !typingPlayerId && (
+        <div className="h-full flex items-center justify-center">
+          <p className="p-8 text-gray-500">No messages yet</p>
+        </div>
+      )}
     </>
   );
 }
@@ -308,13 +328,9 @@ function Input({ onNewMessage, onNewProposal, busy, mode }) {
 }
 
 function MessageInput({ onNewMessage, busy }) {
-  /**
-   * @type {React.MutableRefObject<HTMLTextAreaElement>}
-   */
+  /** @type {React.MutableRefObject<HTMLTextAreaElement>} */
   const textAreaRef = useRef();
-  /**
-   * @type {React.MutableRefObject<HTMLFormElement>}
-   */
+  /** @type {React.MutableRefObject<HTMLFormElement>} */
   const formRef = useRef();
 
   const [buttonEnabled, setButtonEnabled] = useState(false);
@@ -360,6 +376,15 @@ function MessageInput({ onNewMessage, busy }) {
   const placeholder = busy ? "Sending your message..." : "Say something...";
 
   const disabled = busy;
+  const prevDisabled = useRef(disabled);
+
+  // Focus the text input area when the input is enabled back
+  useLayoutEffect(() => {
+    if (!disabled && prevDisabled.current) {
+      textAreaRef.current.focus();
+    }
+    prevDisabled.current = disabled;
+  }, [disabled]);
 
   return (
     <form onSubmit={handleSubmit} ref={formRef}>
@@ -392,13 +417,9 @@ function MessageInput({ onNewMessage, busy }) {
 }
 
 function ProposalInput({ onNewProposal, busy }) {
-  /**
-   * @type {React.MutableRefObject<HTMLInputElement>}
-   */
+  /** @type {React.MutableRefObject<HTMLInputElement>} */
   const inputRef = useRef();
-  /**
-   * @type {React.MutableRefObject<HTMLFormElement>}
-   */
+  /** @type {React.MutableRefObject<HTMLFormElement>} */
   const formRef = useRef();
 
   const [buttonEnabled, setButtonEnabled] = useState(false);

@@ -33,7 +33,10 @@ export default function useGameMechanics() {
 
   const playerId = player.id;
   const otherPlayerId = useMemo(
-    () => players.find((p) => p.id !== playerId).id,
+    () =>
+      players.length === 2
+        ? players.find((p) => p.id !== playerId)?.id
+        : `${playerId}-assistant`,
     [players]
   );
 

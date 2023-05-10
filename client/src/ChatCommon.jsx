@@ -28,6 +28,7 @@ export function ChatCommon({
   onNewMessage: onNewMessageImpl,
   onNewNoDeal: onNewNoDealImpl = undefined,
   onNewProposal: onNewProposalImpl = undefined,
+  otherPlayerTyping = false,
 }) {
   const [busy, setBusy] = useState(false);
 
@@ -215,6 +216,8 @@ export function ChatCommon({
           !waitingOnOtherPlayer && hasNoDealPending ? onContinue : undefined
         }
         waitingOnOtherPlayer={waitingOnOtherPlayer}
+        otherPlayerId={otherPlayerId}
+        otherPlayerTyping={otherPlayerTyping}
       />
     </div>
   );

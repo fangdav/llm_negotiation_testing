@@ -151,3 +151,15 @@ treatments:
         playerCount: 2
         secondPlayerInstructions: tableSeller
         secondPlayerNoDeal: allowed-mutual
+    - name: LlmVsHuman - Llm buyer - OutOfOrder
+      factors:
+        allowOutOfOrder: true
+        firstPlayerInstructions: tableBuyer
+        firstPlayerNoDeal: allowed-mutual
+        llmDemeanor: kind
+        llmPromptRole: system
+        llmStartsFirst: true
+        llmTemperature: 0.2
+        playerCount: 1
+        secondPlayerInstructions: tableSeller
+        secondPlayerNoDeal: allowed-mutual

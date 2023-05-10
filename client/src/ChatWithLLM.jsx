@@ -1,7 +1,7 @@
 // @ts-check
-import React, { useEffect } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { ChatCommon } from "./ChatCommon";
-import { CHAT_API_PORT } from "./constants";
+import { CHAT_API_PORT, CHAT_SHOW_AI_TYPING_INDICATOR, SIMULATE_AI_RESPONSE_DELAYS } from "./constants";
 import { randID } from "./utils";
 import useGameMechanics from "./useGameMechanics";
 
@@ -170,6 +170,24 @@ const getLlmNoDealBehavior = (game) => {
   };
 };
 
+async function randomDelay(minSecs, maxSecs) {
+  const delaySecs = Math.random() * (maxSecs - minSecs) + minSecs;
+  const delayMillis = delaySecs * 1000;
+
+  return new Promise((resolve) => setTimeout(resolve, delayMillis));
+}
+
+/**
+ * Simulate a human response delay based on the number of words in the message.
+ *
+ * @param {string} message
+ * @param {number} [factor=1] Default is `1`
+ */
+async function simulateHumanResponseDelay(message, factor = 1) {
+  const wordsCnt = message.split(" ").length;
+  await randomDelay((wordsCnt / 4) * factor, (wordsCnt / 2) * factor);
+}
+
 export function ChatWithLLM({ game, player, players, stage, round }) {
   const playerId = player.id;
   const assistantPlayerId = `${player.id}-assistant`;
@@ -180,6 +198,9 @@ export function ChatWithLLM({ game, player, players, stage, round }) {
 
   const { messages, setMessages, endWithDeal, endWithNoDeal, switchTurns } =
     useGameMechanics();
+
+  const [llmTyping, setLlmTyping] = useState(false);
+  const latestLlmRespondsToMessage = useRef(undefined);
 
   /** @param {any[]} messages */
   function convertChatToOpenAIMessages(messages) {
@@ -259,7 +280,35 @@ export function ChatWithLLM({ game, player, players, stage, round }) {
 
   const executeLlmTurn = async (messagesWithUserMessage) => {
     try {
+      const llmRespondsToMessage =
+        messagesWithUserMessage[messagesWithUserMessage.length - 1];
+      latestLlmRespondsToMessage.current = llmRespondsToMessage;
+
+      if (SIMULATE_AI_RESPONSE_DELAYS) {
+        await simulateHumanResponseDelay(
+          llmRespondsToMessage?.text || llmPrompt
+        );
+      }
+
+      if (latestLlmRespondsToMessage.current !== llmRespondsToMessage) {
+        // Aborting the attempt if the user has sent a new message
+        return;
+      }
+
+      setLlmTyping(true);
       const chatResponse = await getChatResponse(messagesWithUserMessage);
+
+      if (SIMULATE_AI_RESPONSE_DELAYS) {
+        // Use a shorter delay for the LLM response as it is already
+        // delayed by the API response time
+        await simulateHumanResponseDelay(chatResponse, 0.5);
+      }
+
+      if (latestLlmRespondsToMessage.current !== llmRespondsToMessage) {
+        // Discard the result if the user has sent a new message
+        return;
+      }
+
       const extracted = extractMessageProposal(chatResponse);
 
       const messageCommon = {
@@ -333,6 +382,8 @@ export function ChatWithLLM({ game, player, players, stage, round }) {
       console.error(err);
       return;
     }
+
+    setLlmTyping(false);
   };
 
   const onNewMessage = async (newMessageText) => {
@@ -358,7 +409,11 @@ export function ChatWithLLM({ game, player, players, stage, round }) {
 
     switchTurns();
 
-    await executeLlmTurn(messagesWithUserMessage);
+    // We don't await the LLM turn here because we want to return control to the player
+    // as soon as possible when out of order messages are allowed.
+    // When out of order messages are not allowed, this will be handled by the
+    // turns mechanism in useGameMechanics.
+    void executeLlmTurn(messagesWithUserMessage);
   };
 
   const onNewProposalOrNoDeal = async () => {
@@ -383,6 +438,7 @@ export function ChatWithLLM({ game, player, players, stage, round }) {
       onNewMessage={onNewMessage}
       onNewProposal={onNewProposalOrNoDeal}
       onNewNoDeal={onNewProposalOrNoDeal}
+      otherPlayerTyping={CHAT_SHOW_AI_TYPING_INDICATOR && llmTyping}
     />
   );
 }
