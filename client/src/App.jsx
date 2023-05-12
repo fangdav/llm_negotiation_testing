@@ -4,8 +4,10 @@ import { EmpiricaMenu, EmpiricaParticipant } from "@empirica/core/player/react";
 import React from "react";
 import "virtual:windi.css";
 import { Game } from "./Game";
-import { ExitSurvey } from "./intro-exit/ExitSurvey";
+import { SubjectiveValueSurvey } from "./intro-exit/SubjectiveValueSurvey";
 import { Introduction } from "./intro-exit/Introduction";
+import { Consent } from "./intro-exit/Consent";
+import { PartnerRatingSurvey } from "./intro-exit/PartnerRating";
 
 export default function App() {
   const urlParams = new URLSearchParams(window.location.search);
@@ -19,7 +21,7 @@ export default function App() {
   }
 
   function exitSteps({ game, player }) {
-    return [ExitSurvey];
+    return [SubjectiveValueSurvey, PartnerRatingSurvey];
   }
 
   return (
@@ -27,7 +29,11 @@ export default function App() {
       <div className="h-screen relative">
         <EmpiricaMenu />
         <div className="h-full overflow-auto">
-          <EmpiricaContext introSteps={introSteps} exitSteps={exitSteps}>
+          <EmpiricaContext
+            introSteps={introSteps}
+            exitSteps={exitSteps}
+            consent={Consent}
+          >
             <Game />
           </EmpiricaContext>
         </div>
