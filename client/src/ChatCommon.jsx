@@ -152,7 +152,7 @@ export function ChatCommon({
       setMessages(messagesWithNoDeal);
 
       if (unilateralNoDeal) {
-        endWithDeal();
+        endWithNoDeal();
       } else {
         switchTurns();
       }
