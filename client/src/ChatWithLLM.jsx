@@ -264,7 +264,7 @@ export function ChatWithLLM({ game, player, players, stage, round }) {
       },
       body: JSON.stringify({
         messages: openAIMessages,
-        temperature: game.get("treatment").llmTemperature,
+        temperature: game.get("treatment").llmTemperature || 0,
       }),
     });
 
