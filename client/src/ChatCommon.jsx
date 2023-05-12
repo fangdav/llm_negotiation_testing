@@ -173,7 +173,7 @@ export function ChatCommon({
       /** @type {import("./useGameMechanics").Message} */
       const newMessage = {
         type: "proposal",
-        text: `Proposed a deal: ${proposal}`,
+        text: `Proposed a deal: $${proposal}`,
         proposal,
         proposalStatus: "pending",
         playerId,
