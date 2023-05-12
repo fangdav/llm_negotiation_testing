@@ -330,12 +330,14 @@ export function ChatWithLLM({ game, player, players, stage, round }) {
           type: "proposal",
           proposal: extracted.proposal,
           proposalStatus: "pending",
+          text: `Proposed a deal: $${extracted.proposal}`,
         });
       } else if (extracted.type === "no-deal") {
         messagesWithLLMResponse.push({
           ...messageCommon,
           type: "no-deal",
           noDealStatus: "pending",
+          text: `Proposed to end without a deal`,
         });
       } else if (extracted.type === "deal-accepted") {
         lastMessage.proposalStatus = "accepted";
@@ -379,7 +381,6 @@ export function ChatWithLLM({ game, player, players, stage, round }) {
       // Make sure that the turn is returned to the player if there is an error
       switchTurns(true);
       console.error(err);
-      return;
     }
 
     setLlmTyping(false);
