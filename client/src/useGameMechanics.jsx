@@ -31,10 +31,12 @@ export default function useGameMechanics() {
   const player = usePlayer();
   const players = usePlayers();
 
+  const isLllGame = players.length === 1;
+
   const playerId = player.id;
   const otherPlayerId = useMemo(
     () =>
-      players.length === 2
+      !isLllGame
         ? players.find((p) => p.id !== playerId)?.id
         : `${playerId}-assistant`,
     [players]
@@ -57,7 +59,12 @@ export default function useGameMechanics() {
 
   const switchTurns = useCallback(
     (switchToSelf = false) => {
-      const nextPlayerId = !switchToSelf ? otherPlayerId : playerId;
+      const currentPlayerId = game.get("currentTurnPlayerId");
+
+      const nextPlayerId =
+        currentPlayerId === playerId && !switchToSelf
+          ? otherPlayerId
+          : playerId;
       game.set("currentTurnPlayerId", nextPlayerId);
     },
     [game, playerId, otherPlayerId]
@@ -77,7 +84,20 @@ export default function useGameMechanics() {
     // We might want to save this data to a stage or a round instead if the game can have multiple rounds
     game.set("result", "no-deal");
     player.stage.set("submit", true);
-  }, [game, player]);
+
+    // When the LLM player walks away from the negotiation, we need to alert the user
+    // A pending no deal means that it was the other player who ended the chat unilateraly
+    const isNoDealUnilateral = game
+      .get("messages")
+      .some(
+        (message) =>
+          message.noDealStatus === "pending" && message.playerId !== playerId
+      );
+
+    if (isLllGame && isNoDealUnilateral) {
+      window.alert("The other player has walked away from the negotiation.");
+    }
+  }, [game, player, playerId, isLllGame]);
 
   const pendingActionMessage = useMemo(
     () =>
@@ -122,6 +142,11 @@ export default function useGameMechanics() {
   useEffect(() => {
     if (shouldAutoSubmit && !player.stage.get("submit")) {
       player.stage.set("submit", true);
+
+      // A pending no deal means that it was the other player who ended the chat unilateraly
+      if (hasNoDealPending) {
+        window.alert("The other player has walked away from the negotiation.");
+      }
     }
   }, [shouldAutoSubmit, player]);
 
