@@ -19,7 +19,7 @@ import { useCallback, useEffect, useMemo, useRef } from "react";
  *   playerId: string;
  *   gamePhase: string;
  *   timestamp: number;
- *   noDealStatus?: "pending" | "ended" | "continued";
+ *   noDealStatus?: "pending" | "ended" | "continued" | "unilateral";
  *   proposal?: number;
  *   proposalStatus?: "pending" | "rejected" | "accepted";
  *   agentType: "user" | "agent";
@@ -86,12 +86,11 @@ export default function useGameMechanics() {
     player.stage.set("submit", true);
 
     // When the LLM player walks away from the negotiation, we need to alert the user
-    // A pending no deal means that it was the other player who ended the chat unilateraly
     const isNoDealUnilateral = game
       .get("messages")
       .some(
         (message) =>
-          message.noDealStatus === "pending" && message.playerId !== playerId
+          message.noDealStatus === "unilateral" && message.playerId !== playerId
       );
 
     if (isLllGame && isNoDealUnilateral) {
@@ -127,11 +126,16 @@ export default function useGameMechanics() {
     [messages]
   );
 
+  const hasNoDealUnilateral = useMemo(
+    () => messages.some((message) => message.noDealStatus === "unilateral"),
+    [messages]
+  );
+
   const waitingOnOtherPlayer =
     game.get("currentTurnPlayerId") !== playerId &&
     (pendingActionMessage?.playerId === playerId || !allowOutOfOrder);
 
-  const chatEnded = hasProposalAccepted || hasNoDealEnded;
+  const chatEnded = hasProposalAccepted || hasNoDealEnded || hasNoDealUnilateral;
 
   const stageSubmitted = player.stage.get("submit");
 
@@ -143,12 +147,12 @@ export default function useGameMechanics() {
     if (shouldAutoSubmit && !player.stage.get("submit")) {
       player.stage.set("submit", true);
 
-      // A pending no deal means that it was the other player who ended the chat unilateraly
-      if (hasNoDealPending) {
+      // The other player has ended the chat unilateraly
+      if (hasNoDealUnilateral) {
         window.alert("The other player has walked away from the negotiation.");
       }
     }
-  }, [shouldAutoSubmit, player]);
+  }, [shouldAutoSubmit, player, hasNoDealUnilateral]);
 
   return useMemo(
     () => ({

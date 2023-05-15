@@ -147,7 +147,7 @@ export function ChatCommon({
       /** @type {import("./useGameMechanics").Message} */
       const newMessage = {
         type: "no-deal",
-        noDealStatus: "pending",
+        noDealStatus: unilateralNoDeal ? "unilateral" : "pending",
         playerId,
         text: `Proposed to end without a deal`,
         gamePhase: `Round ${round.index} - ${stage.name}`,
