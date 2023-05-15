@@ -61,13 +61,21 @@ export default function useGameMechanics() {
     (switchToSelf = false) => {
       const currentPlayerId = game.get("currentTurnPlayerId");
 
-      const nextPlayerId =
-        currentPlayerId === playerId && !switchToSelf
+      // If the game is LLL, we need to switch between the player and the assistant
+      // If the game is Human vs Human, we need to switch to the other player
+      // If force switch is true, we need to switch to the current player
+      const nextPlayerId = switchToSelf
+        ? playerId
+        : isLllGame
+        ? currentPlayerId === playerId
           ? otherPlayerId
-          : playerId;
+          : playerId
+        : otherPlayerId;
+
+      currentPlayerId === playerId && !switchToSelf ? otherPlayerId : playerId;
       game.set("currentTurnPlayerId", nextPlayerId);
     },
-    [game, playerId, otherPlayerId]
+    [game, playerId, otherPlayerId, isLllGame]
   );
 
   const endWithDeal = useCallback(
@@ -135,7 +143,8 @@ export default function useGameMechanics() {
     game.get("currentTurnPlayerId") !== playerId &&
     (pendingActionMessage?.playerId === playerId || !allowOutOfOrder);
 
-  const chatEnded = hasProposalAccepted || hasNoDealEnded || hasNoDealUnilateral;
+  const chatEnded =
+    hasProposalAccepted || hasNoDealEnded || hasNoDealUnilateral;
 
   const stageSubmitted = player.stage.get("submit");
 
