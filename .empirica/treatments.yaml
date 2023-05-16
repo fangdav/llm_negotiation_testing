@@ -163,3 +163,35 @@ treatments:
         playerCount: 1
         secondPlayerInstructions: tableSeller
         secondPlayerNoDeal: allowed-mutual
+    - name: LlmVsHuman - Llm seller - OutOfOrder - Unilateral
+      factors:
+        allowOutOfOrder: true
+        firstPlayerInstructions: tableSeller
+        firstPlayerNoDeal: allowed-unilateral
+        llmDemeanor: kind
+        llmPromptRole: system
+        llmStartsFirst: true
+        llmTemperature: 0.2
+        playerCount: 1
+        secondPlayerInstructions: tableBuyer
+        secondPlayerNoDeal: allowed-unilateral
+    - name: LlmVsHuman - Llm seller - OutOfOrder - Unilateral - Zero temp
+      factors:
+        allowOutOfOrder: true
+        firstPlayerInstructions: tableSeller
+        firstPlayerNoDeal: allowed-unilateral
+        llmDemeanor: kind
+        llmPromptRole: system
+        llmStartsFirst: true
+        llmTemperature: 0
+        playerCount: 1
+        secondPlayerInstructions: tableBuyer
+        secondPlayerNoDeal: allowed-unilateral
+    - name: HumanVsHuman - Unilateral - OutOfOrder
+      factors:
+        allowOutOfOrder: true
+        firstPlayerInstructions: tableBuyer
+        firstPlayerNoDeal: allowed-unilateral
+        playerCount: 2
+        secondPlayerInstructions: tableSeller
+        secondPlayerNoDeal: allowed-unilateral
