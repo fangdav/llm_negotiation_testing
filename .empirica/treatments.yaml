@@ -51,6 +51,16 @@ factors:
       values:
         - value: true
         - value: false
+    - name: firstPlayerStatedOpponent
+      desc: Whether the first player is told they are playing against a human or an AI.
+      values:
+        - value: ai
+        - value: human
+    - name: secondPlayerStatedOpponent
+      desc: Whether the second player is told they are playing against a human or an AI.
+      values:
+        - value: ai
+        - value: human
 treatments:
     - name: HumanVsHuman
       factors:
@@ -195,3 +205,26 @@ treatments:
         playerCount: 2
         secondPlayerInstructions: tableSeller
         secondPlayerNoDeal: allowed-unilateral
+    - name: LlmVsHuman - Llm buyer - Deceive human
+      factors:
+        firstPlayerInstructions: tableBuyer
+        firstPlayerNoDeal: allowed-mutual
+        llmDemeanor: kind
+        llmPromptRole: system
+        llmStartsFirst: true
+        llmTemperature: 0.2
+        playerCount: 1
+        secondPlayerInstructions: tableSeller
+        secondPlayerNoDeal: allowed-mutual
+        secondPlayerStatedOpponent: human
+    - name: HumanVsLlm - Human seller - With stated opponent
+      factors:
+        firstPlayerInstructions: tableSeller
+        firstPlayerNoDeal: allowed-mutual
+        firstPlayerStatedOpponent: ai
+        llmDemeanor: kind
+        llmPromptRole: system
+        llmTemperature: 0.2
+        playerCount: 1
+        secondPlayerInstructions: tableBuyer
+        secondPlayerNoDeal: allowed-mutual
