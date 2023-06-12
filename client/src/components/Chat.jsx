@@ -285,6 +285,14 @@ function Instructions({ instructions = "" }) {
   );
 }
 
+/**
+ * @param {{
+ *  messages: import("../useGameMechanics").Message[];
+ *  maxSize?: number;
+ *  typingPlayerId?: string;
+ * }} param0 
+ * @returns 
+ */
 function Messages({ messages, maxSize = 0, typingPlayerId }) {
   return (
     <>
@@ -299,10 +307,28 @@ function Messages({ messages, maxSize = 0, typingPlayerId }) {
               />
             )}
             {message.type === "proposal" && (
-              <ProposalMessage message={message} key={message.id} />
+              <>
+                {message.text && (
+                  <TextMessage
+                    message={message}
+                    maxSize={maxSize}
+                    key={message.id}
+                  />
+                )}
+                <ProposalMessage message={message} key={message.id} />
+              </>
             )}
             {message.type === "no-deal" && (
-              <NoDealMessage message={message} key={message.id} />
+              <>
+                <NoDealMessage message={message} key={message.id} />
+                {message.text && (
+                  <TextMessage
+                    message={message}
+                    maxSize={maxSize}
+                    key={message.id}
+                  />
+                )}
+              </>
             )}
           </React.Fragment>
         ))}
