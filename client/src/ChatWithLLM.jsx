@@ -338,6 +338,8 @@ export function ChatWithLLM({ game, player, players, stage, round }) {
       };
 
       const messagesWithLLMResponse = [...messagesWithUserMessage];
+
+      /** @type {import("./useGameMechanics").Message} */
       const lastMessage =
         messagesWithLLMResponse[messagesWithLLMResponse.length - 1];
 
@@ -364,7 +366,7 @@ export function ChatWithLLM({ game, player, players, stage, round }) {
           type: "message",
         });
       } else if (extracted.type === "no-deal-rejected") {
-        lastMessage.noDealStatus = "rejected";
+        lastMessage.noDealStatus = "continued";
 
         messagesWithLLMResponse.push({
           ...messageCommon,
