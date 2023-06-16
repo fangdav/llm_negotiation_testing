@@ -6,8 +6,8 @@ import {
   CHAT_SHOW_AI_TYPING_INDICATOR,
   SIMULATE_AI_RESPONSE_DELAYS,
 } from "./constants";
-import { randID } from "./utils";
 import useGameMechanics from "./useGameMechanics";
+import { randID } from "./utils";
 
 const DEAL_REACHED = "[DEAL REACHED]";
 const NO_DEAL = "[NO DEAL]";
@@ -327,6 +327,7 @@ export function ChatWithLLM({ game, player, players, stage, round }) {
 
       const extracted = extractMessageProposal(chatResponse);
 
+      /** @type {Omit<import("./useGameMechanics").Message, 'type'>} */
       const messageCommon = {
         text: extracted.text,
         originalText: chatResponse,
@@ -378,6 +379,7 @@ export function ChatWithLLM({ game, player, players, stage, round }) {
         messagesWithLLMResponse.push({
           ...messageCommon,
           type: "message",
+          text: extracted.text,
         });
       }
 
