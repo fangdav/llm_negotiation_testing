@@ -18,7 +18,7 @@ const QuestionRadioGroup = ({
 
   return (
     <fieldset>
-      <legend className="min-h-20 flex items-end text-base font-medium text-gray-900">
+      <legend className="flex items-end text-base font-medium text-gray-900">
         <div>{question}</div>
       </legend>
       <div className="mt-4 flex justify-between gap-x-4">

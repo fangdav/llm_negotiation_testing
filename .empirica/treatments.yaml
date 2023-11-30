@@ -27,15 +27,15 @@ factors:
         - value: user
         - value: system
     - name: firstPlayerInstructions
-      desc: Whether the first player (i.e., the first person programmed to speak, see llmStartsfirst) in the game is programmed to be the buyer or the seller
+      desc: Whether the first player (i.e., the first person programmed to speak, see llmStartsfirst) in the game is programmed to be the COO or the Consultant
       values:
-        - value: tableBuyer
-        - value: tableSeller
+        - value: coo
+        - value: consultant
     - name: secondPlayerInstructions
-      desc: Whether the second player in the game is programmed to be the buyer or the seller
+      desc: Whether the second player in the game is programmed to be the COO or the Consultant
       values:
-        - value: tableBuyer
-        - value: tableSeller
+        - value: coo
+        - value: consultant
     - name: firstPlayerNoDeal
       desc: Should the first player be allowed to end the game without a deal?
       values:
@@ -68,38 +68,38 @@ treatments:
       desc: This is the condition for Player vs. Player
       factors:
         allowOutOfOrder: true
-        firstPlayerInstructions: tableBuyer
+        firstPlayerInstructions: coo
         firstPlayerNoDeal: allowed-mutual
         firstPlayerStatedOpponent: human
         playerCount: 2
-        secondPlayerInstructions: tableSeller
+        secondPlayerInstructions: consultant
         secondPlayerNoDeal: allowed-mutual
         secondPlayerStatedOpponent: human
-    - name: Player (Buyer) vs. LLM
-      desc: This is the condition where the player is the buyer vs. LLM.
+    - name: Player (COO) vs. LLM
+      desc: This is the condition where the player is the COO vs. LLM.
       factors:
         allowOutOfOrder: true
-        firstPlayerInstructions: tableSeller
+        firstPlayerInstructions: consultant
         firstPlayerNoDeal: allowed-mutual
         firstPlayerStatedOpponent: ai
         llmPromptRole: system
         llmStartsFirst: true
         llmTemperature: 0.2
         playerCount: 1
-        secondPlayerInstructions: tableBuyer
+        secondPlayerInstructions: coo
         secondPlayerNoDeal: allowed-mutual
         secondPlayerStatedOpponent: ai
-    - name: Player (Seller) vs. LLM
-      desc: This is the condition where the player is the seller vs. LLM.
+    - name: Player (Consultant) vs. LLM
+      desc: This is the condition where the player is the Consultant vs. LLM.
       factors:
         allowOutOfOrder: true
-        firstPlayerInstructions: tableBuyer
+        firstPlayerInstructions: coo
         firstPlayerNoDeal: allowed-mutual
         firstPlayerStatedOpponent: ai
         llmPromptRole: system
         llmStartsFirst: true
         llmTemperature: 0.2
         playerCount: 1
-        secondPlayerInstructions: tableSeller
+        secondPlayerInstructions: consultant
         secondPlayerNoDeal: allowed-mutual
         secondPlayerStatedOpponent: ai

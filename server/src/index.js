@@ -11,29 +11,33 @@ import process from "process";
 import { Empirica } from "./callbacks";
 import { initApi } from "./chat-api";
 
-const argv = minimist(process.argv.slice(2), { string: ["token"] });
+try {
+  const argv = minimist(process.argv.slice(2), { string: ["token"] });
 
-setLogLevel(argv["loglevel"] || "info");
+  setLogLevel(argv["loglevel"] || "info");
 
-(async () => {
-  const ctx = await AdminContext.init(
-    argv["url"] || "http://localhost:3000/query",
-    argv["sessionTokenPath"],
-    "callbacks",
-    argv["token"],
-    {},
-    classicKinds
-  );
+  (async () => {
+    const ctx = await AdminContext.init(
+      argv["url"] || "http://localhost:3000/query",
+      argv["sessionTokenPath"],
+      "callbacks",
+      argv["token"],
+      {},
+      classicKinds
+    );
 
-  ctx.register(ClassicLoader);
-  ctx.register(Classic());
-  ctx.register(Lobby());
-  ctx.register(Empirica);
-  ctx.register(function (_) {
-    _.on("ready", function () {
-      info("server: started");
+    ctx.register(ClassicLoader);
+    ctx.register(Classic());
+    ctx.register(Lobby());
+    ctx.register(Empirica);
+    ctx.register(function (_) {
+      _.on("ready", function () {
+        info("server: started");
+      });
     });
-  });
 
-  initApi();
-})();
+    initApi();
+  })();
+} catch (err) {
+  console.log("Caught");
+}

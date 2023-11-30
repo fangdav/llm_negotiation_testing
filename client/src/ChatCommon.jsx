@@ -212,6 +212,7 @@ export function ChatCommon({
       messages={messages}
       playerId={playerId}
       instructions={player.get("instructions")}
+      points={JSON.parse(player.get("points"))}
       onNewMessage={onNewMessage}
       onNewNoDeal={allowNoDeal ? onNewNoDeal : undefined}
       onNewProposal={onNewProposal}

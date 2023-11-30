@@ -21,10 +21,10 @@ const NO_DEAL_REJECTED = "[NO DEAL REJECTED]";
 /** @param {boolean} allowNoDeal */
 const proposeDealPrompt = (
   allowNoDeal
-) => `When a deal has been reached, output a single line that starts with a string ${DEAL_REACHED}, followed by the agreed upon amount, followed by your response message. For example "${DEAL_REACHED} $193 This works for me, $193 is a fair price", if the agreed upon amount is $193.
+) => `When a deal has been reached, output a single line that starts with a string ${DEAL_REACHED}, followed by the agreed upon options as a comma-separated string. For example "${DEAL_REACHED} C,A,B", if you agreed on option C for the first issue, option A for the second issue, and B for the third issue.
 ${
   allowNoDeal
-    ? `If you decide an agreement cannot be met and would rather walk away, output a single line that starts with a string ${NO_DEAL}, followed by your response message. For example "${NO_DEAL} I'm sorry, I don't think we can reach an agreement."
+    ? `If you decide an agreement cannot be met and would rather walk away, output a single line that starts with a string ${NO_DEAL}. For example "${NO_DEAL}"
 `
     : ""
 }Do not output any other messages, do not format your response, use ${DEAL_REACHED}${
@@ -35,7 +35,7 @@ If the user wants to continue negotiating, continue negotiating.`;
 
 const receivedDealReachedPrompt = (
   price
-) => `The user has proposed a deal of $${price}. If you accept, output a single line with a string ${DEAL_ACCEPTED}.
+) => `The user has proposed an agreement with options ${price} for the discussed issues. If you accept, output a single line with a string ${DEAL_ACCEPTED}.
 If you reject, output a single line that contains a string ${DEAL_REJECTED} followed by your negotiation message. For example "${DEAL_REJECTED} I'm sorry, but this is too much for me."
 Do not output any other messages, do not format your response, use ${DEAL_ACCEPTED} or ${DEAL_REJECTED} verbatim. Your output will be parsed by a computer.
 If you accept the deal, the negotiation ends.
@@ -56,7 +56,7 @@ If you reject the no deal, continue negotiating.`;
  *   | {
  *       type: "proposal";
  *       text: string;
- *       proposal: number;
+ *       proposal: string;
  *     }
  *   | {
  *       type: "no-deal";
@@ -91,17 +91,13 @@ const extractMessageProposal = (message) => {
     const messageSplit = message.split(DEAL_REACHED);
     const proposal = messageSplit[1].trim();
 
-    const hasDollarSign = proposal.includes("$");
+    const hasValidAgreement = proposal.split(',').length === 3;
 
-    if (hasDollarSign) {
-      const amountStr = proposal.substring(0, proposal.indexOf(" "));
-      const negotiationMessage = proposal.substring(amountStr.length);
-      const amount = amountStr.replace("$", "");
-
+    if (hasValidAgreement) {
       return {
         type: "proposal",
-        text: negotiationMessage || ``,
-        proposal: parseInt(amount),
+        text: ``,
+        proposal,
       };
     } else {
       // Bail out if we have a deal reached but no dollar sign
@@ -202,7 +198,7 @@ async function simulateHumanResponseDelay(message, factor = 1) {
 const messageTypeToText = (message) => {
   switch (message.type) {
     case "proposal":
-      return `Proposed a deal: $${message.proposal}`;
+      return `Proposed a deal: ${message.proposal}`;
     case "no-deal":
       return `Proposed to end without a deal`;
     default:

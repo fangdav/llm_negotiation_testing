@@ -7,11 +7,11 @@ import { Instructions } from "./Instructions";
 import { Messages } from "./Messages";
 import { ReactMarkdown } from "react-markdown/lib/react-markdown";
 
-
 export function Chat({
   messages,
   playerId,
   instructions,
+  points,
   onNewMessage,
   onNewProposal,
   onNewNoDeal,
@@ -49,6 +49,7 @@ export function Chat({
             messages={messages}
             currentPlayerId={playerId}
             typingPlayerId={otherPlayerTyping ? otherPlayerId : undefined}
+            points={points}
           />
 
           <InputBox
@@ -72,6 +73,7 @@ export function Chat({
           onNewProposal={onNewProposal}
           setInputMode={setInputMode}
           messages={messages}
+          points={points}
           onNewNoDeal={onNewNoDeal}
           onAccept={onAccept}
           onReject={onReject}
@@ -81,7 +83,7 @@ export function Chat({
         </div>
 
 
-        <div className="flex flex-grow max-w-prose flex-col justify-between gap-y-8 overflow-hidden">
+        <div className="flex flex-grow max-w-prose flex-col justify-between gap-y-8 overflow-auto">
           <div className="prose prose-bluegray max-w-prose rounded-lg bg-gray-50 px-6 py-2 shadow-sm ring-1 ring-gray-900/5">
             <ReactMarkdown>{instructions}</ReactMarkdown>
           </div>

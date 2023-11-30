@@ -3,6 +3,7 @@ import React from "react";
 import { Button } from "../components/Button";
 import { Messages } from "../components/chat/Messages";
 import { Divider } from "../components/Divider";
+import { DealVisualizer } from "../components/chat/Deals";
 
 export function Result({ next }) {
   const game = useGame();
@@ -21,41 +22,42 @@ export function Result({ next }) {
           <p className="text-gray-700">The negotiation ended without a deal.</p>
         )}
         {result === "deal-reached" && (
-          <p className="text-gray-700">
-            You've reached a deal with a final price of{" "}
-            <strong>
-              {Intl.NumberFormat([], {
-                style: "currency",
-                currency: "USD",
-              }).format(price)}
-            </strong>
-            .
-          </p>
+          <>
+            <p className="text-gray-700">You've reached a deal:</p>
+            <DealVisualizer
+              proposal={price}
+              points={JSON.parse(player.get("points"))}
+            />
+          </>
         )}
       </div>
 
       <div className="flex justify-end">
-          <div className="mt-4">
-            <Button onClick={next} autoFocus>
-              Next
-            </Button>
-          </div>
+        <div className="mt-4">
+          <Button onClick={next} autoFocus>
+            Next
+          </Button>
+        </div>
       </div>
-    
+
       <Divider text="Transcript" />
 
       <div className="max-h-100 overflow-y-scroll">
-        <Messages messages={messages} currentPlayerId={player.id} />
+        <Messages
+          messages={messages}
+          currentPlayerId={player.id}
+          points={JSON.parse(player.get("points"))}
+        />
       </div>
 
       <Divider text="End of Transcript" />
 
       <div className="flex justify-end">
-          <div className="mt-4">
-            <Button onClick={next} autoFocus>
-              Next
-            </Button>
-          </div>
+        <div className="mt-4">
+          <Button onClick={next} autoFocus>
+            Next
+          </Button>
+        </div>
       </div>
     </div>
   );

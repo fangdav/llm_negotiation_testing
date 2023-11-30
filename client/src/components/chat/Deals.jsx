@@ -4,6 +4,38 @@ import { Button } from "../Button";
 import { Modal } from "../Modal";
 import { NoDealMessage, ProposalMessage } from "./Messages";
 import { Divider } from "../Divider";
+import QuestionRadioGroup from "../QuestionRadioGroup";
+
+/**
+ * @param {{
+ *   proposal: string;
+ *   points: {
+ *     name: string;
+ *     options: { name: string; agreement: string; points: number }[];
+ *   }[];
+ * }} param0
+ */
+export const DealVisualizer = ({ proposal, points }) => {
+  // convert proposal from an array of A,B,C to an array of 0,1,2
+  const choicesIdxs = proposal.split(",").map((c) => c.charCodeAt(0) - 65);
+  const choices = points.map((p, idx) => p.options[choicesIdxs[idx]]);
+  const totalPoints = choices.reduce((acc, choice) => acc + choice.points, 0);
+  return (
+    <div>
+      <ol>
+        {choices.map((choice, idx) => (
+          <li key={idx}>
+            <span className="font-bold">{points[idx].name}</span>:{" "}
+            {choice.agreement} ({choice.points} points)
+          </li>
+        ))}
+      </ol>
+      <span>
+        <span className="font-bold">Total</span>: {totalPoints} points
+      </span>
+    </div>
+  );
+};
 
 export function DealArea({
   waitingOnOtherPlayer,
@@ -12,6 +44,7 @@ export function DealArea({
   inputMode,
   setInputMode,
   messages,
+  points,
   onNewNoDeal,
   onNewProposal,
   onAccept,
@@ -34,6 +67,7 @@ export function DealArea({
             busy={waitingOnProposal}
             onNewProposal={onNewProposal}
             onCancel={() => setInputMode("message")}
+            points={points}
           />
         </Modal>
       )}
@@ -44,6 +78,7 @@ export function DealArea({
             onAccept={onAccept}
             onReject={onReject}
             proposalMessage={messages[messages.length - 1]}
+            points={points}
           />
         </Modal>
       )}
@@ -72,12 +107,13 @@ export function DealArea({
   );
 }
 
-function AcceptReject({ onAccept, onReject, proposalMessage }) {
+function AcceptReject({ onAccept, onReject, proposalMessage, points }) {
   return (
     <div className="lg:min-w-96 max-w-prose">
       <div className="rounded bg-gray-100 p-2">
         <ProposalMessage
           message={proposalMessage}
+          points={points}
           // We can just put anything in here, since it's just checking the
           // message is from self, and in this case, it is not.
           currentPlayerId={"not self"}
@@ -173,79 +209,50 @@ function PositiveNegativeButtons({
   );
 }
 
-function ProposalInput({ onNewProposal, onCancel, busy }) {
-  const [value, setValue] = useState("");
-
-  const handleOnChange = (e) => {
-    setValue(e.target.value.replace(/\D/, ""));
-  };
+function ProposalInput({ onNewProposal, onCancel, busy, points }) {
+  const [value, setValue] = useState(points.map(() => undefined));
 
   const handleSubmit = (e) => {
     e.preventDefault();
-
-    if (value.length > 12) {
-      e.preventDefault();
-
-      alert("Max length is 12");
-
-      return;
-    }
-
-    const price = parseInt(value, 10);
-
-    if (isNaN(price)) {
-      e.preventDefault();
-      alert("Price must be a number");
-
-      return;
-    }
-
-    onNewProposal(price);
-    setValue("");
+    onNewProposal(value.join(","));
+    setValue(points.map(() => undefined));
   };
 
-  const placeholder = busy
-    ? "Sending proposal..."
-    : "Offer your price, e.g. 100";
+  const incomplete = value.some((v) => v === undefined);
 
-  const disabled = busy;
+  const choicesIdxs = value.map((c) => c ? c.charCodeAt(0) - 65 : undefined);
+  const choices = points.map((p, idx) => choicesIdxs[idx] != null ? p.options[choicesIdxs[idx]] : undefined);
+  const totalPoints = choices.reduce((acc, choice) => acc + (choice ? choice.points : 0), 0);
 
   return (
     <form className="lg:min-w-96 max-w-prose" onSubmit={handleSubmit}>
-      <fieldset disabled={disabled}>
+      <fieldset disabled={busy}>
         <div>
-          <label
-            htmlFor="price"
-            className="block text-sm font-medium leading-6 text-gray-900"
-          >
-            Deal
-          </label>
-          <div className="relative mt-2 rounded-md shadow-sm">
-            <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
-              <span className="text-gray-500 sm:text-sm">$</span>
-            </div>
-            <input
-              type="text"
-              id="price"
-              className="block w-full rounded-md border-0 !py-1.5 !pl-7 !pr-12 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:!ring-teal-600 sm:text-sm sm:leading-6"
-              aria-describedby="price-currency"
-              autoFocus
-              placeholder={placeholder}
-              onChange={handleOnChange}
-              value={value}
-              inputMode="numeric"
-              name="text"
+          {points.map((p, idx) => (
+            <QuestionRadioGroup
+              key={idx}
+              value={value[idx]}
+              withLabelKey
+              onChange={(e) => {
+                const newProposal = [...value];
+                newProposal[idx] = e.target.value;
+                setValue(newProposal);
+              }}
+              question={p.name}
+              options={p.options.reduce((acc, option, idx) => ({
+                ...acc,
+                [option.name]: option.agreement,
+              }), {})}
             />
-            <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-3">
-              <span className="text-gray-500 sm:text-sm" id="price-currency">
-                USD
-              </span>
-            </div>
-          </div>
+          ))}
+        </div>
+
+        <div>
+          <span className="font-bold">Total</span>: {totalPoints} points
         </div>
 
         <div className="mt-4 flex justify-between">
-          <Button type="submit" disabled={busy || value.trim().length === 0}>
+          <Button type="submit" disabled={busy || incomplete}>
             Submit
           </Button>
           <Button onClick={onCancel} variant="secondary" disabled={busy}>

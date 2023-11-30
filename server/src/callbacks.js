@@ -1,5 +1,5 @@
 import { ClassicListenersCollector } from "@empirica/core/admin/classic";
-import instructions from "./instructions";
+import { instructions, points } from "./instructions";
 export const Empirica = new ClassicListenersCollector();
 
 // If true, makes stages last a very long time.
@@ -18,7 +18,9 @@ Empirica.onGameStart(({ game }) => {
   } = treatment;
 
   const firstPlayerInstructions = instructions[firstPlayerInstructionsShort];
+  const firstPlayerPoints = points[firstPlayerInstructionsShort];
   const secondPlayerInstructions = instructions[secondPlayerInstructionsShort];
+  const secondPlayerPoints = points[secondPlayerInstructionsShort];
 
   if (!firstPlayerInstructions || !secondPlayerInstructions) {
     throw new Error("Invalid instructions short code");
@@ -32,7 +34,7 @@ Empirica.onGameStart(({ game }) => {
     name: "Round 1",
     task,
   });
-  
+
   round.addStage({ name: "Instructions", duration: dev ? 120000 : 60 });
   round.addStage({ name: "Negotiation", duration: dev ? 360000 : 600 });
 
@@ -41,20 +43,26 @@ Empirica.onGameStart(({ game }) => {
   if (multiplayer) {
     game.players[0].set("instructions", firstPlayerInstructions);
     game.players[1].set("instructions", secondPlayerInstructions);
+    game.players[0].set("points", JSON.stringify(firstPlayerPoints));
+    game.players[1].set("points", JSON.stringify(secondPlayerPoints));
     game.players[0].set("statedOpponent", firstPlayerStatedOpponent);
     game.players[1].set("statedOpponent", secondPlayerStatedOpponent);
     currentTurnPlayerId = game.players[0].id;
   } else {
     if (llmStartsFirst) {
       game.players[0].set("llmInstructions", firstPlayerInstructions);
+      game.players[0].set("llmPoints", JSON.stringify(firstPlayerPoints));
       game.players[0].set("llmStatedOpponent", firstPlayerStatedOpponent);
       game.players[0].set("instructions", secondPlayerInstructions);
+      game.players[0].set("points", JSON.stringify(secondPlayerPoints));
       game.players[0].set("statedOpponent", secondPlayerStatedOpponent);
       currentTurnPlayerId = `${game.players[0].id}-assistant`;
     } else {
       game.players[0].set("instructions", firstPlayerInstructions);
+      game.players[0].set("points", JSON.stringify(firstPlayerPoints));
       game.players[0].set("statedOpponent", firstPlayerStatedOpponent);
       game.players[0].set("llmInstructions", secondPlayerInstructions);
+      game.players[0].set("llmPoints", JSON.stringify(secondPlayerPoints));
       game.players[0].set("llmStatedOpponent", secondPlayerStatedOpponent);
       currentTurnPlayerId = game.players[0].id;
     }

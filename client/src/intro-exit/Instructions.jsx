@@ -1,6 +1,7 @@
 import { usePlayer, useGame} from "@empirica/core/player/classic/react";
 import React from "react";
 import ReactMarkdown from "react-markdown";
+import remarkGfm from 'remark-gfm'
 import { Button } from "../components/Button";
 import { Timer } from "../components/Timer";
 
@@ -33,7 +34,7 @@ export function Instructions({next}) {
 
         <div className="flex">
           <div className="w-prose rounded-lg bg-gray-50 px-6 py-2 shadow-sm ring-1 ring-gray-900/5">
-            <ReactMarkdown>{instructions}</ReactMarkdown>
+            <ReactMarkdown remarkPlugins={[remarkGfm]}>{instructions}</ReactMarkdown>
           </div>
         </div>
 

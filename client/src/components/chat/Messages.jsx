@@ -2,6 +2,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import { useInterval } from "../../utils";
 import { Avatar } from "../Avatar";
+import { DealVisualizer } from "./Deals";
 
 /**
  * @param {{
@@ -14,6 +15,7 @@ import { Avatar } from "../Avatar";
  */
 export function Messages({
   messages,
+  points,
   currentPlayerId,
   maxSize = 0,
   typingPlayerId,
@@ -54,6 +56,7 @@ export function Messages({
           messages.map((message, i) => (
             <Message
               message={message}
+              points={points}
               currentPlayerId={currentPlayerId}
               maxSize={maxSize}
             />
@@ -69,7 +72,7 @@ export function Messages({
   );
 }
 
-function Message({ message, currentPlayerId, maxSize = 0 }) {
+function Message({ message, points, currentPlayerId, maxSize = 0 }) {
   switch (message.type) {
     case "message":
       return (
@@ -85,6 +88,7 @@ function Message({ message, currentPlayerId, maxSize = 0 }) {
       return (
         <ProposalMessage
           message={message}
+          points={points}
           maxSize={maxSize}
           key={message.id}
           currentPlayerId={currentPlayerId}
@@ -155,6 +159,7 @@ function TextMessage({ message, currentPlayerId, maxSize }) {
 
 export function ProposalMessage({
   message,
+  points,
   currentPlayerId,
   hidePending = false,
   maxSize = 0,
@@ -166,12 +171,7 @@ export function ProposalMessage({
       </div>
       <div>
         <span className="italic">Proposed a deal: </span>
-        <span className="font-bold">
-          {Intl.NumberFormat([], {
-            style: "currency",
-            currency: "USD",
-          }).format(message.proposal)}
-        </span>
+        <DealVisualizer proposal={message.proposal} points={points} />
       </div>
       <div>
         {message.proposalStatus === "accepted" && (
