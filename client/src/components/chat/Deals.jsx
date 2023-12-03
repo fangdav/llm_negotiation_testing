@@ -45,6 +45,7 @@ export function DealArea({
   setInputMode,
   messages,
   points,
+  unilateralNoDeal,
   onNewNoDeal,
   onNewProposal,
   onAccept,
@@ -68,6 +69,15 @@ export function DealArea({
             onNewProposal={onNewProposal}
             onCancel={() => setInputMode("message")}
             points={points}
+          />
+        </Modal>
+      )}
+
+      {inputMode === "no-deal-confirm" && (
+        <Modal onClickOut={() => setInputMode("message")} showCloseButton>
+          <NoDealConfirmation
+            onContinue={() => setInputMode("message")}
+            onEnd={onNewNoDeal}
           />
         </Modal>
       )}
@@ -100,9 +110,33 @@ export function DealArea({
         positiveAction={() => setInputMode("proposal")}
         positiveDisabled={!canTakeAction}
         negativeText="End with no deal"
-        negativeAction={onNewNoDeal}
+        negativeAction={
+          unilateralNoDeal ? () => setInputMode("no-deal-confirm") : onNewNoDeal
+        }
         negativeDisabled={!canTakeAction || !canEndNoDeal}
       />
+    </div>
+  );
+}
+
+function NoDealConfirmation({ onContinue, onEnd }) {
+  return (
+    <div className="lg:min-w-96 max-w-prose">
+      <div className="rounded bg-gray-100 p-2">
+        Are you sure you want to walk away without a deal? This will immediately
+        end the game and you will not be able to continue negotiating.
+      </div>
+
+      <div className="mt-4">
+        <PositiveNegativeButtons
+          positiveText="No, keep negotiating"
+          positiveAction={onContinue}
+          positiveDisabled={!onContinue}
+          negativeText="Yes, end with no deal"
+          negativeAction={onEnd}
+          negativeDisabled={!onEnd}
+        />
+      </div>
     </div>
   );
 }
@@ -220,9 +254,14 @@ function ProposalInput({ onNewProposal, onCancel, busy, points }) {
 
   const incomplete = value.some((v) => v === undefined);
 
-  const choicesIdxs = value.map((c) => c ? c.charCodeAt(0) - 65 : undefined);
-  const choices = points.map((p, idx) => choicesIdxs[idx] != null ? p.options[choicesIdxs[idx]] : undefined);
-  const totalPoints = choices.reduce((acc, choice) => acc + (choice ? choice.points : 0), 0);
+  const choicesIdxs = value.map((c) => (c ? c.charCodeAt(0) - 65 : undefined));
+  const choices = points.map((p, idx) =>
+    choicesIdxs[idx] != null ? p.options[choicesIdxs[idx]] : undefined
+  );
+  const totalPoints = choices.reduce(
+    (acc, choice) => acc + (choice ? choice.points : 0),
+    0
+  );
 
   return (
     <form className="lg:min-w-96 max-w-prose" onSubmit={handleSubmit}>
@@ -239,10 +278,13 @@ function ProposalInput({ onNewProposal, onCancel, busy, points }) {
                 setValue(newProposal);
               }}
               question={p.name}
-              options={p.options.reduce((acc, option, idx) => ({
-                ...acc,
-                [option.name]: option.agreement,
-              }), {})}
+              options={p.options.reduce(
+                (acc, option, idx) => ({
+                  ...acc,
+                  [option.name]: option.agreement,
+                }),
+                {}
+              )}
             />
           ))}
         </div>

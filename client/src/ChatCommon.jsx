@@ -229,6 +229,7 @@ export function ChatCommon({
       waitingOnOtherPlayer={waitingOnOtherPlayer}
       otherPlayerId={otherPlayerId}
       otherPlayerTyping={otherPlayerTyping}
+      unilateralNoDeal={unilateralNoDeal}
     />
   );
 }

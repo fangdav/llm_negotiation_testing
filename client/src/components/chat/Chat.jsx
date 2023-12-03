@@ -23,6 +23,7 @@ export function Chat({
   onReject,
   onEnd,
   onContinue,
+  unilateralNoDeal,
 }) {
   const [inputMode, setInputMode] = useState("message");
 
@@ -79,6 +80,7 @@ export function Chat({
           onReject={onReject}
           onContinue={onContinue}
           onEnd={onEnd}
+          unilateralNoDeal={unilateralNoDeal}
         />
         </div>
 
