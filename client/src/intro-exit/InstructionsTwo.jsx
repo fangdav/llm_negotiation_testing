@@ -14,7 +14,7 @@ export function InstructionsTwo({next}) {
   
 
   return (
-    <div className="h-full w-full justify-center  overflow-auto lg:grid xl:items-center">
+    <div className="w-full justify-center lg:grid xl:items-center">
       <div className="lt-lg:bottom-0 absolute w-full text-center lg:top-0">
         <div className="lt-lg:mb-2 inline-block px-4 py-1 lg:mt-2">
           {/* <Timer /> */}
@@ -34,7 +34,7 @@ export function InstructionsTwo({next}) {
 
         <div className="flex justify-end">
           <div className="mt-4">
-            <Button onClick={next} autoFocus>
+            <Button onClick={next} autoFocus scrollToTop>
               Next
             </Button>
           </div>

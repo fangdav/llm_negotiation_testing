@@ -40,7 +40,7 @@ export default function App() {
     <EmpiricaParticipant url={url} ns={playerKey} modeFunc={EmpiricaClassic}>
       <div className="relative h-screen">
         <EmpiricaMenu />
-        <div className="h-full overflow-auto">
+        <div id="scroll-container" className="h-full overflow-auto">
           <EmpiricaContext
             introSteps={introSteps}
             exitSteps={exitSteps}

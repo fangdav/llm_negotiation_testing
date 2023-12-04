@@ -72,7 +72,7 @@ export function HumannessQuestion({ next }) {
 
               <div className="flex justify-end">
                 <div className="mt-7">
-                  <Button type="submit">
+                  <Button type="submit" scrollToTop>
                     Submit
                   </Button>
                 </div>

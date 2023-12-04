@@ -34,7 +34,7 @@ export function Result({ next }) {
 
       <div className="flex justify-end">
         <div className="mt-4">
-          <Button onClick={next} autoFocus>
+          <Button onClick={next} autoFocus scrollToTop>
             Next
           </Button>
         </div>
@@ -54,7 +54,7 @@ export function Result({ next }) {
 
       <div className="flex justify-end">
         <div className="mt-4">
-          <Button onClick={next} autoFocus>
+          <Button onClick={next} autoFocus scrollToTop>
             Next
           </Button>
         </div>

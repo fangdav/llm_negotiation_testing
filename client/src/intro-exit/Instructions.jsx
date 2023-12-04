@@ -1,5 +1,5 @@
 import { usePlayer, useGame} from "@empirica/core/player/classic/react";
-import React from "react";
+import React, { useLayoutEffect } from "react";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from 'remark-gfm'
 import { Button } from "../components/Button";
@@ -18,8 +18,13 @@ export function Instructions({next}) {
   const instructions = player.get("instructions");
   const statedOpponent = player.get("statedOpponent");
 
+  useLayoutEffect(() => {
+    const scrollContainer = document.getElementById("scroll-container-instructions");
+    scrollContainer.scrollTop = 0;
+  }, []);
+
   return (
-    <div className="h-full w-full justify-center  overflow-auto lg:grid xl:items-center">
+    <div id="scroll-container-instructions" className="h-full w-full justify-center  overflow-auto lg:grid xl:items-center">
       <div className="lt-lg:bottom-0 absolute w-full text-center lg:top-0">
         <div className="lt-lg:mb-2 inline-block px-4 py-1 lg:mt-2">
           <Timer />
@@ -48,7 +53,7 @@ export function Instructions({next}) {
         {!player.stage.get("submit") ? 
           <div className="flex justify-end">
             <div className="mt-4">
-              <Button onClick={() => player.stage.set("submit", true)} autoFocus>
+              <Button onClick={() => player.stage.set("submit", true)} autoFocus scrollToTop>
                 Next
               </Button>
             </div>

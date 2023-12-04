@@ -62,7 +62,7 @@ export function Consent({ onConsent }) {
               </div>
             </div>
             <div>
-              <Button type="submit">
+              <Button type="submit" scrollToTop>
                 <p>Next</p>
               </Button>
             </div>
