@@ -14,7 +14,7 @@ ${options
 
 const cooPoints = [
   {
-    name: "LUMP SUM FEE",
+    name: "Lump Sum Fee",
     options: [
       { name: "A", agreement: "$25,000", points: 1500 },
       { name: "B", agreement: "$30,000", points: 1200 },
@@ -24,7 +24,7 @@ const cooPoints = [
     ],
   },
   {
-    name: "STOCK OPTIONS",
+    name: "Stock Options",
     options: [
       { name: "A", agreement: "0 shares", points: 250 },
       { name: "B", agreement: "1,000 shares", points: 200 },
@@ -34,7 +34,7 @@ const cooPoints = [
     ],
   },
   {
-    name: "DISCRETIONARY BUDGET",
+    name: "Discretioanry Budget",
     options: [
       { name: "A", agreement: "No discretionary budget", points: 1000 },
       { name: "B", agreement: "$5,000 discretionary budget", points: 800 },
@@ -62,7 +62,7 @@ This information is solely for you as you prepare for the meeting.
 
 const consultantPoints = [
   {
-    name: "LUMP SUM FEE",
+    name: "Lump Sum Fee",
     options: [
       { name: "A", agreement: "$25,000", points: 200 },
       { name: "B", agreement: "$30,000", points: 400 },
@@ -72,7 +72,7 @@ const consultantPoints = [
     ],
   },
   {
-    name: "STOCK OPTIONS",
+    name: "Stock Options",
     options: [
       { name: "A", agreement: "0 shares", points: 100 },
       { name: "B", agreement: "1,000 shares", points: 200 },
@@ -82,7 +82,7 @@ const consultantPoints = [
     ],
   },
   {
-    name: "DISCRETIONARY BUDGET",
+    name: "Discretionary Budget",
     options: [
       { name: "A", agreement: "No discretionary budget", points: 300 },
       { name: "B", agreement: "$5,000 discretionary budget", points: 600 },
