@@ -14,22 +14,38 @@ const defaultOptions = {
 
 const questions = [
   {
+<<<<<<< Updated upstream
     question: "How assertive was your counterpart?",
+=======
+    question: <>How <strong>assertive</strong> was your counterpart?</>,
+>>>>>>> Stashed changes
     name: "pr-q1",
     options: defaultOptions,
   },
   {
+<<<<<<< Updated upstream
     question: "How much empathy did your counterpart convey?",
+=======
+    question: <>How much <strong>empathy</strong> did your counterpart convey?</>,
+>>>>>>> Stashed changes
     name: "pr-q2",
     options: defaultOptions,
   },
   {
+<<<<<<< Updated upstream
     question: "How warm was your counterpart?",
+=======
+    question: <>How <strong>warm</strong> was your counterpart?</>,
+>>>>>>> Stashed changes
     name: "pr-q3",
     options: defaultOptions,
   },
   {
+<<<<<<< Updated upstream
     question: "How competent was your counterpart?",
+=======
+    question: <>How <strong>dominant</strong> was your counterpart?</>,
+>>>>>>> Stashed changes
     name: "pr-q4",
     options: defaultOptions,
   },

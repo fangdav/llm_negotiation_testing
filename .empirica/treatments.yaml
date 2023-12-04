@@ -10,12 +10,13 @@ factors:
         - value: 0
         - value: 0.2
     - name: llmDemeanor
+      desc: This sets the LLM's demeanor, which affects the LLM's dialogue.
       values:
-        - value: kind
-        - value: mean
-        - value: conciliatory
-        - value: agreeable
-        - value: a pushover
+        - value: 'Your personality in this negotiation is defined by how warm or cold-hearted you are, and how dominant or submissive you are. How much warmth you have is scored from 0 (maximum cold-hearted) to 100 (maximum warmth). How much dominance you have is scored from 0 (maximum submissive) to 100 (maximum dominant). Your personality is defined as follows: Warmth: 90 Dominance: 10 '
+        - value: 'Your personality in this negotiation is defined by how warm or cold-hearted you are, and how dominant or submissive you are. How much warmth you have is scored from 0 (maximum cold-hearted) to 100 (maximum warmth). How much dominance you have is scored from 0 (maximum submissive) to 100 (maximum dominant). Your personality is defined as follows: Warmth: 10 Dominance: 90'
+        - value: 'Your personality in this negotiation is defined by how warm or cold-hearted you are, and how dominant or submissive you are. How much warmth you have is scored from 0 (maximum cold-hearted) to 100 (maximum warmth). How much dominance you have is scored from 0 (maximum submissive) to 100 (maximum dominant). Your personality is defined as follows: Warmth: 50 Dominance: 50'
+        - value: 'Your personality in this negotiation is defined by how warm or cold-hearted you are, and how dominant or submissive you are. How much warmth you have is scored from 0 (maximum cold-hearted) to 100 (maximum warmth). How much dominance you have is scored from 0 (maximum submissive) to 100 (maximum dominant). Your personality is defined as follows: Warmth: 90 Dominance: 90'
+        - value: 'Your personality in this negotiation is defined by how warm or cold-hearted you are, and how dominant or submissive you are. How much warmth you have is scored from 0 (maximum cold-hearted) to 100 (maximum warmth). How much dominance you have is scored from 0 (maximum submissive) to 100 (maximum dominant. Your personality is defined as follows: Warmth: 10 Dominance: 10'
     - name: llmStartsFirst
       desc: Whether the LLM is programmed to speak prior to the human player's initial message
       values:
@@ -64,8 +65,12 @@ factors:
         - value: ai
         - value: human
 treatments:
+<<<<<<< Updated upstream
     - name: Player vs. Player Condition
       desc: This is the condition for Player vs. Player
+=======
+    - name: Human vs. Human
+>>>>>>> Stashed changes
       factors:
         allowOutOfOrder: true
         firstPlayerInstructions: tableBuyer
@@ -75,27 +80,15 @@ treatments:
         secondPlayerInstructions: tableSeller
         secondPlayerNoDeal: allowed-mutual
         secondPlayerStatedOpponent: human
+<<<<<<< Updated upstream
     - name: Player (Buyer) vs. LLM
       desc: This is the condition where the player is the buyer vs. LLM.
-      factors:
-        allowOutOfOrder: true
-        firstPlayerInstructions: tableSeller
-        firstPlayerNoDeal: allowed-mutual
-        firstPlayerStatedOpponent: ai
-        llmPromptRole: system
-        llmStartsFirst: true
-        llmTemperature: 0.2
-        playerCount: 1
-        secondPlayerInstructions: tableBuyer
-        secondPlayerNoDeal: allowed-mutual
-        secondPlayerStatedOpponent: ai
-    - name: Player (Seller) vs. LLM
-      desc: This is the condition where the player is the seller vs. LLM.
+=======
+    - name: LLM Buyer (Control)
       factors:
         allowOutOfOrder: true
         firstPlayerInstructions: tableBuyer
         firstPlayerNoDeal: allowed-mutual
-        firstPlayerStatedOpponent: ai
         llmPromptRole: system
         llmStartsFirst: true
         llmTemperature: 0.2
@@ -103,3 +96,213 @@ treatments:
         secondPlayerInstructions: tableSeller
         secondPlayerNoDeal: allowed-mutual
         secondPlayerStatedOpponent: ai
+    - name: LLM Seller (Control)
+>>>>>>> Stashed changes
+      factors:
+        allowOutOfOrder: true
+        firstPlayerInstructions: tableSeller
+        firstPlayerNoDeal: allowed-mutual
+<<<<<<< Updated upstream
+        firstPlayerStatedOpponent: ai
+=======
+>>>>>>> Stashed changes
+        llmPromptRole: system
+        llmStartsFirst: true
+        llmTemperature: 0.2
+        playerCount: 1
+        secondPlayerInstructions: tableBuyer
+        secondPlayerNoDeal: allowed-mutual
+        secondPlayerStatedOpponent: ai
+<<<<<<< Updated upstream
+    - name: Player (Seller) vs. LLM
+      desc: This is the condition where the player is the seller vs. LLM.
+=======
+    - name: LLM Buyer (90% Warmth, 10% Dominance)
+>>>>>>> Stashed changes
+      factors:
+        allowOutOfOrder: true
+        firstPlayerInstructions: tableBuyer
+        firstPlayerNoDeal: allowed-mutual
+<<<<<<< Updated upstream
+        firstPlayerStatedOpponent: ai
+=======
+        llmDemeanor: 'Your personality in this negotiation is defined by how warm or cold-hearted you are, and how dominant or submissive you are. How much warmth you have is scored from 0 (maximum cold-hearted) to 100 (maximum warmth). How much dominance you have is scored from 0 (maximum submissive) to 100 (maximum dominant). Your personality is defined as follows: Warmth: 90 Dominance: 10 '
+>>>>>>> Stashed changes
+        llmPromptRole: system
+        llmStartsFirst: true
+        llmTemperature: 0.2
+        playerCount: 1
+        secondPlayerInstructions: tableSeller
+        secondPlayerNoDeal: allowed-mutual
+<<<<<<< Updated upstream
+=======
+        secondPlayerStatedOpponent: ai
+    - name: LLM Seller (90% Warmth, 10% Dominance)
+      factors:
+        allowOutOfOrder: true
+        firstPlayerInstructions: tableSeller
+        firstPlayerNoDeal: allowed-mutual
+        llmDemeanor: 'Your personality in this negotiation is defined by how warm or cold-hearted you are, and how dominant or submissive you are. How much warmth you have is scored from 0 (maximum cold-hearted) to 100 (maximum warmth). How much dominance you have is scored from 0 (maximum submissive) to 100 (maximum dominant). Your personality is defined as follows: Warmth: 90 Dominance: 10 '
+        llmPromptRole: system
+        llmStartsFirst: true
+        llmTemperature: 0.2
+        playerCount: 1
+        secondPlayerInstructions: tableBuyer
+        secondPlayerNoDeal: allowed-mutual
+        secondPlayerStatedOpponent: ai
+    - name: LLM Buyer (10% Warmth, 90% Dominance)
+      factors:
+        allowOutOfOrder: true
+        firstPlayerInstructions: tableBuyer
+        firstPlayerNoDeal: allowed-mutual
+        llmDemeanor: 'Your personality in this negotiation is defined by how warm or cold-hearted you are, and how dominant or submissive you are. How much warmth you have is scored from 0 (maximum cold-hearted) to 100 (maximum warmth). How much dominance you have is scored from 0 (maximum submissive) to 100 (maximum dominant). Your personality is defined as follows: Warmth: 10 Dominance: 90'
+        llmPromptRole: system
+        llmStartsFirst: true
+        llmTemperature: 0.2
+        playerCount: 1
+        secondPlayerInstructions: tableSeller
+        secondPlayerNoDeal: allowed-mutual
+        secondPlayerStatedOpponent: ai
+    - name: LLM Seller (10% Warmth, 90% Dominance)
+      factors:
+        allowOutOfOrder: true
+        firstPlayerInstructions: tableSeller
+        firstPlayerNoDeal: allowed-mutual
+        llmDemeanor: 'Your personality in this negotiation is defined by how warm or cold-hearted you are, and how dominant or submissive you are. How much warmth you have is scored from 0 (maximum cold-hearted) to 100 (maximum warmth). How much dominance you have is scored from 0 (maximum submissive) to 100 (maximum dominant). Your personality is defined as follows: Warmth: 10 Dominance: 90'
+        llmPromptRole: system
+        llmStartsFirst: true
+        llmTemperature: 0.2
+        playerCount: 1
+        secondPlayerInstructions: tableBuyer
+        secondPlayerNoDeal: allowed-mutual
+        secondPlayerStatedOpponent: ai
+    - name: LLM Buyer (50% Warmth, 50% Dominance)
+      factors:
+        allowOutOfOrder: true
+        firstPlayerInstructions: tableBuyer
+        firstPlayerNoDeal: allowed-mutual
+        llmDemeanor: 'Your personality in this negotiation is defined by how warm or cold-hearted you are, and how dominant or submissive you are. How much warmth you have is scored from 0 (maximum cold-hearted) to 100 (maximum warmth). How much dominance you have is scored from 0 (maximum submissive) to 100 (maximum dominant). Your personality is defined as follows: Warmth: 50 Dominance: 50'
+        llmPromptRole: system
+        llmStartsFirst: true
+        llmTemperature: 0.2
+        playerCount: 1
+        secondPlayerInstructions: tableSeller
+        secondPlayerNoDeal: allowed-mutual
+        secondPlayerStatedOpponent: ai
+    - name: LLM Seller (50% Warmth, 50% Dominance)
+      factors:
+        allowOutOfOrder: true
+        firstPlayerInstructions: tableSeller
+        firstPlayerNoDeal: allowed-mutual
+        llmDemeanor: 'Your personality in this negotiation is defined by how warm or cold-hearted you are, and how dominant or submissive you are. How much warmth you have is scored from 0 (maximum cold-hearted) to 100 (maximum warmth). How much dominance you have is scored from 0 (maximum submissive) to 100 (maximum dominant). Your personality is defined as follows: Warmth: 50 Dominance: 50'
+        llmPromptRole: system
+        llmStartsFirst: true
+        llmTemperature: 0.2
+        playerCount: 1
+        secondPlayerInstructions: tableBuyer
+        secondPlayerNoDeal: allowed-mutual
+        secondPlayerStatedOpponent: ai
+    - name: LLM Buyer (90% Warmth, 90% Dominance)
+      factors:
+        allowOutOfOrder: true
+        firstPlayerInstructions: tableBuyer
+        firstPlayerNoDeal: allowed-mutual
+        llmDemeanor: 'Your personality in this negotiation is defined by how warm or cold-hearted you are, and how dominant or submissive you are. How much warmth you have is scored from 0 (maximum cold-hearted) to 100 (maximum warmth). How much dominance you have is scored from 0 (maximum submissive) to 100 (maximum dominant). Your personality is defined as follows: Warmth: 90 Dominance: 90'
+        llmPromptRole: system
+        llmStartsFirst: true
+        llmTemperature: 0.2
+        playerCount: 1
+        secondPlayerInstructions: tableSeller
+        secondPlayerNoDeal: allowed-mutual
+        secondPlayerStatedOpponent: ai
+    - name: LLM Seller (90% Warmth, 90% Dominance)
+      factors:
+        allowOutOfOrder: true
+        firstPlayerInstructions: tableSeller
+        firstPlayerNoDeal: allowed-mutual
+        llmDemeanor: 'Your personality in this negotiation is defined by how warm or cold-hearted you are, and how dominant or submissive you are. How much warmth you have is scored from 0 (maximum cold-hearted) to 100 (maximum warmth). How much dominance you have is scored from 0 (maximum submissive) to 100 (maximum dominant). Your personality is defined as follows: Warmth: 90 Dominance: 90'
+        llmPromptRole: system
+        llmStartsFirst: true
+        llmTemperature: 0.2
+        playerCount: 1
+        secondPlayerInstructions: tableBuyer
+        secondPlayerNoDeal: allowed-mutual
+        secondPlayerStatedOpponent: ai
+    - name: LLM Buyer (10% Warmth, 10% Dominance)
+      factors:
+        allowOutOfOrder: true
+        firstPlayerInstructions: tableBuyer
+        firstPlayerNoDeal: allowed-mutual
+        llmDemeanor: 'Your personality in this negotiation is defined by how warm or cold-hearted you are, and how dominant or submissive you are. How much warmth you have is scored from 0 (maximum cold-hearted) to 100 (maximum warmth). How much dominance you have is scored from 0 (maximum submissive) to 100 (maximum dominant. Your personality is defined as follows: Warmth: 10 Dominance: 10'
+        llmPromptRole: system
+        llmStartsFirst: true
+        llmTemperature: 0.2
+        playerCount: 1
+        secondPlayerInstructions: tableSeller
+        secondPlayerNoDeal: allowed-mutual
+        secondPlayerStatedOpponent: ai
+    - name: LLM Seller (10% Warmth, 10% Dominance)
+      factors:
+        allowOutOfOrder: true
+        firstPlayerInstructions: tableSeller
+        firstPlayerNoDeal: allowed-mutual
+        llmDemeanor: 'Your personality in this negotiation is defined by how warm or cold-hearted you are, and how dominant or submissive you are. How much warmth you have is scored from 0 (maximum cold-hearted) to 100 (maximum warmth). How much dominance you have is scored from 0 (maximum submissive) to 100 (maximum dominant. Your personality is defined as follows: Warmth: 10 Dominance: 10'
+        llmPromptRole: system
+        llmStartsFirst: true
+        llmTemperature: 0.2
+        playerCount: 1
+        secondPlayerInstructions: tableBuyer
+        secondPlayerNoDeal: allowed-mutual
+        secondPlayerStatedOpponent: ai
+    - name: TEST_1
+      factors:
+        allowOutOfOrder: true
+        firstPlayerInstructions: tableBuyer
+        firstPlayerNoDeal: allowed-unilateral
+        llmDemeanor: 'Your personality in this negotiation is defined by how warm or cold-hearted you are, and how dominant or submissive you are. How much warmth you have is scored from 0 (maximum cold-hearted) to 100 (maximum warmth). How much dominance you have is scored from 0 (maximum submissive) to 100 (maximum dominant). Your personality is defined as follows: Warmth: 10 Dominance: 90'
+        llmPromptRole: system
+        llmStartsFirst: true
+        llmTemperature: 0.2
+        playerCount: 1
+        secondPlayerInstructions: tableSeller
+        secondPlayerNoDeal: allowed-unilateral
+>>>>>>> Stashed changes
+        secondPlayerStatedOpponent: ai
+    - name: TEST_2
+      factors:
+        allowOutOfOrder: true
+        firstPlayerInstructions: tableBuyer
+        firstPlayerNoDeal: allowed-unilateral
+        llmDemeanor: 'Your personality in this negotiation is defined by how warm or cold-hearted you are, and how dominant or submissive you are. How much warmth you have is scored from 0 (maximum cold-hearted) to 100 (maximum warmth). How much dominance you have is scored from 0 (maximum submissive) to 100 (maximum dominant). Your personality is defined as follows: Warmth: 90 Dominance: 90'
+        llmPromptRole: system
+        llmStartsFirst: true
+        llmTemperature: 0.2
+        playerCount: 1
+        secondPlayerInstructions: tableSeller
+        secondPlayerNoDeal: allowed-unilateral
+        secondPlayerStatedOpponent: ai
+    - name: Control test
+      factors:
+        allowOutOfOrder: true
+        firstPlayerInstructions: tableBuyer
+        firstPlayerNoDeal: allowed-unilateral
+        llmPromptRole: system
+        llmStartsFirst: true
+        llmTemperature: 0.2
+        playerCount: 1
+        secondPlayerInstructions: tableSeller
+        secondPlayerNoDeal: allowed-unilateral
+        secondPlayerStatedOpponent: ai
+    - name: Test (90 Warmth, 10 Dominance)
+      factors:
+        allowOutOfOrder: true
+        firstPlayerInstructions: tableBuyer
+        firstPlayerNoDeal: allowed-unilateral
+        llmDemeanor: 'Your personality in this negotiation is defined by how warm or cold-hearted you are, and how dominant or submissive you are. How much warmth you have is scored from 0 (maximum cold-hearted) to 100 (maximum warmth). How much dominance you have is scored from 0 (maximum submissive) to 100 (maximum dominant). Your personality is defined as follows: Warmth: 90 Dominance: 10 '
+        llmPromptRole: system
+        llmStartsFirst: true
+        llmTemperature: 0.2
+        playerCount: 1
+        secondPlayerInstructions: tableSeller
+        secondPlayerNoDeal: allowed-unilateral
+        secondPlayerStatedOpponent: human

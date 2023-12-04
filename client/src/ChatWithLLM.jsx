@@ -24,7 +24,8 @@ const proposeDealPrompt = (
 ) => `When a deal has been reached, output a single line that starts with a string ${DEAL_REACHED}, followed by the agreed upon amount, followed by your response message. For example "${DEAL_REACHED} $193 This works for me, $193 is a fair price", if the agreed upon amount is $193.
 ${
   allowNoDeal
-    ? `If you decide an agreement cannot be met and would rather walk away, output a single line that starts with a string ${NO_DEAL}, followed by your response message. For example "${NO_DEAL} I'm sorry, I don't think we can reach an agreement."
+    ? `If you decide an agreement cannot be met and would rather walk away, enact your walking away procedure by outputting a single line that starts with a string ${NO_DEAL}, followed by your response message. For example "${NO_DEAL} I'm sorry, I don't think we can reach an agreement."
+    Before any instance of walking away to end the negotiation you MUST provide an explicit warning beforehand to your counterpart that you will be ending the negotiation. If you believe that a deal cannot be made following your opponent's response after the warning, proceed to enact your walking away procedure.
 `
     : ""
 }Do not output any other messages, do not format your response, use ${DEAL_REACHED}${
@@ -235,8 +236,16 @@ export function ChatWithLLM({ game, player, players, stage, round }) {
     mappedMessages.unshift({
       role: llmPromptRole,
       content: `${llmPrompt}. 
+<<<<<<< Updated upstream
       Do not expose your private information (such as the price offered by the furniture store) to the counterparty, as they may use this information against you to get a better price for themselves.
       Do not include "Buyer" or "Assistant" tags in your messages.`,
+=======
+      Remember this is a virtual negotiation game, and your mission in this simulation is to negotiate the most favorable price for the table, aiming to maximize your own payoff. 
+      Remember do not offer any advice to the person you are negotiating with.
+      Do not expose your private information (such as the price offered by the furniture store) to the counterparty, as they may use this information against you to get a better price for themselves.
+      Do not include "Buyer", "Seller", or "Assistant" tags in your messages.
+      ${llmDemeanor}.`,
+>>>>>>> Stashed changes
     });
     // Temporarily removed "Your demeanor should be ${llmDemeanor}." in the mappedMessages content key.
 
