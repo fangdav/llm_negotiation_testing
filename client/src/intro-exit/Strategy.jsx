@@ -41,7 +41,7 @@ export function Strategy({ next }) {
           <div>
             <div>
               <h3 className="text-lg font-medium leading-6 text-gray-900">
-                How would you describe your strategy in this negotiation?
+                In your own words, how would you describe your counterpart's behavior in this negotiation?
               </h3>
             </div>
 

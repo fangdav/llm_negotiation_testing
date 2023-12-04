@@ -14,22 +14,22 @@ const defaultOptions = {
 
 const questions = [
   {
-    question: "How assertive was your counterpart?",
+    question: <>How <strong>assertive</strong> was your counterpart?</>,
     name: "pr-q1",
     options: defaultOptions,
   },
   {
-    question: "How much empathy did your counterpart convey?",
+    question: <>How much <strong>empathy</strong> did your counterpart convey?</>,
     name: "pr-q2",
     options: defaultOptions,
   },
   {
-    question: "How warm was your counterpart?",
+    question: <>How <strong>warm</strong> was your counterpart?</>,
     name: "pr-q3",
     options: defaultOptions,
   },
   {
-    question: "How competent was your counterpart?",
+    question: <>How <strong>dominant</strong> was your counterpart?</>,
     name: "pr-q4",
     options: defaultOptions,
   },

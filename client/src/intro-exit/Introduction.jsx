@@ -41,10 +41,10 @@ export function Introduction({next}) {
 
         <p>
           In this task, you will be asked to participate in a{" "}
-          <strong>negotiation</strong> with another party. You will receive a{" "}
-          <strong>bonus compensation</strong> as high as $5 based on{" "}
-          <strong>how well you do</strong> on the negotiation (i.e., the price
-          you are able to negotiate the table for) relative to other
+          <strong>negotiation</strong> with another party. You will have a greater chance of receieving a {" "}
+          <strong>$10 bonus compensation</strong> based on{" "}
+          <strong>how well you do </strong> on the negotiation (ie., the price
+          you are able to negotiate) relative to other
           participants.
         </p>
 
@@ -55,15 +55,17 @@ export function Introduction({next}) {
           the negotiation (i.e., end the negotiation). The{" "}
           <strong>same features</strong> are given to the{" "}
           <strong>other party</strong>. The other party is able to send you
-          offers or walk away from the negotiation at any time.
+          offers or walk away from the negotiation. At any time, if either you or the other party 
+          walks away from the negotiation, the negotiation will end without reaching a deal.
         </p>
+
 
         {secondPlayerStatedOpponent && (
           <p className="text-bluegray-700 font-medium">
-            You have been assigned to negotiate with{" "}
-            <Highlight>
+            You will be negotiating with{" "}
+            <strong>
               {secondPlayerStatedOpponent === "ai" ? "an A.I." : "a human"} negotiator.
-            </Highlight>
+            </strong>
           </p>
         )}
 
