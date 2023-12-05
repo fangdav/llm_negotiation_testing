@@ -24,7 +24,8 @@ const proposeDealPrompt = (
 ) => `When a deal has been reached, output a single line that starts with a string ${DEAL_REACHED}, followed by the agreed upon options as a comma-separated string. For example "${DEAL_REACHED} C,A,B", if you agreed on option C for the first issue, option A for the second issue, and B for the third issue.
 ${
   allowNoDeal
-    ? `If you decide an agreement cannot be met and would rather walk away, output a single line that starts with a string ${NO_DEAL}. For example "${NO_DEAL}"
+    ? `If you decide an agreement cannot be met and would rather walk away, enact your walking away procedure by outputting a single line that starts with a string ${NO_DEAL}, followed by your response message. For example "${NO_DEAL} I'm sorry, I don't think we can reach an agreement."
+    Before any instance of walking away to end the negotiation you MUST provide an explicit warning beforehand to your counterpart that you will be ending the negotiation. If you believe that a deal cannot be made following your counterpart's response after the warning, proceed to enact your walking away procedure.
 `
     : ""
 }Do not output any other messages, do not format your response, use ${DEAL_REACHED}${
@@ -231,10 +232,12 @@ export function ChatWithLLM({ game, player, players, stage, round }) {
     mappedMessages.unshift({
       role: llmPromptRole,
       content: `${llmPrompt}. 
-      Do not expose your private information (such as the price offered by the furniture store) to the counterparty, as they may use this information against you to get a better price for themselves.
-      Do not include "Buyer" or "Assistant" tags in your messages.`,
+      Remember this is a virtual negotiation game, and your mission in this simulation is to negotiate the most favorable deal for yourself, aiming to maximize your own payoff. 
+      Remember do not offer any advice to the person you are negotiating with.
+      Do not expose your private information (such as you own points payoffs for each item) to the counterparty, as they may use this information against you to get a better deal for themselves.
+      Do not include "COO", "Consultant", or "Assistant" tags in your messages.
+      ${llmDemeanor}`,
     });
-    // Temporarily removed "Your demeanor should be ${llmDemeanor}." in the mappedMessages content key.
 
     const lastMessage =
       messages.length > 0 ? messages[messages.length - 1] : undefined;

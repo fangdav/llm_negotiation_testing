@@ -27,9 +27,9 @@ export function InstructionsTwo({next}) {
         <ul>
           <li>You will have 10 minutes to negotiate with your counterpart.</li><br/>
           <li>On the next screen, you will see information about your role and be able to chat with your counterpart.</li><br/>
-          <li>If you or your counterpart decide to walk away from the negotiation without a deal (or time runs out before you make a deal), <strong>your "score" will be the price offered to you by the furniture store (which corresponds to the lowest possible score)</strong>, as will be described in the instructions on the next page.</li><br/>
+          <li>If you or your counterpart decide to walk away from the negotiation without a deal (or time runs out before you make a deal), <strong>your "score" will be 500 points</strong>, as will be described in the instructions on the next page.</li><br/>
           <li>Transcripts will be reviewed to check that participants are actively negotiating.</li><br/>
-          <li>Your bonus payment will be contingent on how your final negotiated price ranks among all other participants. <strong>If you are buying the table, you want to get as low a price as possible. If you are selling the table, you want to get as high a price as possible. Your odds of winning a $10 bonus are proportional to how well you perform relative to others. </strong> Bonuses will be processed within a maximum of two days.</li><br/>
+          <li>Your bonus payment will be contingent on how your final negotiated outcome ranks among all other participants. <strong> Your odds of winning a $10 bonus are proportional to how many points you earn in your negotiation relative to others. </strong> Bonuses will be processed within a maximum of two days.</li><br/>
         </ul>
 
         <div className="flex justify-end">

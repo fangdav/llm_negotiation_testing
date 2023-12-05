@@ -43,9 +43,8 @@ export function Introduction({next}) {
           In this task, you will be asked to participate in a{" "}
           <strong>negotiation</strong> with another party. You will have a greater chance of receieving a {" "}
           <strong>$10 bonus compensation</strong> based on{" "}
-          <strong>how well you do </strong> on the negotiation (ie., the price
-          you are able to negotiate) relative to other
-          participants.
+          <strong>how well you do </strong> on the negotiation (ie., the number of points you earn in your negotiation) 
+          relative to other participants.
         </p>
 
         <p>

@@ -35,7 +35,7 @@ export function Instructions({next}) {
       <div className="lt-lg:pb-20 prose prose-bluegray w-full max-w-prose p-8 lg:pt-12">
         <h3 className="mt-0">Instructions</h3>
 
-        <p>Here are the instructions for this negotiation:</p>
+        <p>Here are the instructions for this negotiation simulation. Please read through this before proceeding. </p>
 
         <div className="flex">
           <div className="w-prose rounded-lg bg-gray-50 px-6 py-2 shadow-sm ring-1 ring-gray-900/5">
