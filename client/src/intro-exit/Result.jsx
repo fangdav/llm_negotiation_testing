@@ -16,7 +16,7 @@ export function Result({ next }) {
     <div className="mx-auto mt-3 w-full max-w-screen-md p-20 sm:mt-5">
       <h3 className="text-lg font-medium leading-6 text-gray-900">Result</h3>
       <div className="mb-6 mt-2 space-y-2">
-        <p className="text-gray-700">The negotiation is over.</p>
+        <p className="text-gray-700">The negotiation is over. Please proceed towards the debriefing survey.</p>
         {result === "no-deal" && (
           <p className="text-gray-700">The negotiation ended without a deal.</p>
         )}
@@ -34,20 +34,28 @@ export function Result({ next }) {
         )}
       </div>
 
-      <Button onClick={next} autoFocus>
-        <p>Next</p>
-      </Button>
-
+      <div className="flex justify-end">
+          <div className="mt-4">
+            <Button onClick={next} autoFocus scrollToTop>
+              Next
+            </Button>
+          </div>
+      </div>
+    
       <Divider text="Transcript" />
 
-      <Messages messages={messages} currentPlayerId={player.id} />
+      <div className="max-h-100 overflow-y-scroll">
+        <Messages messages={messages} currentPlayerId={player.id} />
+      </div>
 
       <Divider text="End of Transcript" />
 
-      <div className="mt-6">
-        <Button onClick={next} autoFocus>
-          <p>Next</p>
-        </Button>
+      <div className="flex justify-end">
+          <div className="mt-4">
+            <Button onClick={next} autoFocus scrollToTop>
+              Next
+            </Button>
+          </div>
       </div>
     </div>
   );

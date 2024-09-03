@@ -1,6 +1,7 @@
 // @ts-check
 // @ts-ignore
-import React from "react";
+import { usePlayer } from "@empirica/core/player/classic/react";
+import React, { useState } from "react";
 import { Questions } from "../components/Questions";
 
 const emptyOptions = {
@@ -156,6 +157,7 @@ export function SubjectiveValueSurvey({ next }) {
           questions={questions}
           onDone={next}
           withLabelKey
+          groupSize={4}
         />
       </div>
     </div>

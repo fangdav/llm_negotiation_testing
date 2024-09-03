@@ -7,8 +7,16 @@ import { SubjectiveValueSurvey } from "./intro-exit/SubjectiveValueSurvey";
 import { Consent } from "./intro-exit/Consent";
 import { Result } from "./intro-exit/Result";
 import { PartnerRatingSurvey } from "./intro-exit/PartnerRating";
-import { HumannessQuestion } from "./intro-exit/HumannessQuestion";
+import { Strategy } from "./intro-exit/Strategy";
+//import { HumannessQuestion } from "./intro-exit/HumannessQuestion"; //commented out for now
 import { Demographic } from "./intro-exit/Demographic";
+import { Introduction } from "./intro-exit/Introduction";
+import { InstructionsTwo } from "./intro-exit/InstructionsTwo";
+import { FinishedSubmissionCode } from "./intro-exit/FinishedSubmissionCode";
+import { PlayerCreate } from "./intro-exit/PlayerCreate"
+import { GamesFull } from "./intro-exit/GamesFull";
+
+import {Lobby} from "./intro-exit/Lobby.jsx"
 
 export default function App() {
   const urlParams = new URLSearchParams(window.location.search);
@@ -18,28 +26,36 @@ export default function App() {
   const url = `${protocol}//${host}/query`;
 
   function introSteps({ game, player }) {
-    return [];
+    return [Introduction, InstructionsTwo];
   }
 
   function exitSteps({ game, player }) {
-    return [
-      Result,
-      SubjectiveValueSurvey,
-      PartnerRatingSurvey,
-      HumannessQuestion,
-      Demographic,
-    ];
+    if(player.get("ended") === "game ended"){
+      return [
+        Result,
+        SubjectiveValueSurvey,
+        PartnerRatingSurvey,
+        Strategy,
+        //HumannessQuestion,
+        Demographic,
+      ];
+    }
+    else{
+      return [GamesFull]
+    }
   }
 
   return (
     <EmpiricaParticipant url={url} ns={playerKey} modeFunc={EmpiricaClassic}>
       <div className="relative h-screen">
         <EmpiricaMenu />
-        <div className="h-full overflow-auto">
+        <div id="scroll-container" className="h-full overflow-auto">
           <EmpiricaContext
             introSteps={introSteps}
             exitSteps={exitSteps}
             consent={Consent}
+            finished={FinishedSubmissionCode}
+            playerCreate={PlayerCreate}
           >
             <Game />
           </EmpiricaContext>

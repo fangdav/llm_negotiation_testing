@@ -112,7 +112,7 @@ function TypingIndicator({ playerId }) {
   const [count, setCount] = useState(1);
 
   useInterval(() => {
-    console.log("This will run every second!");
+    // console.log("This will run every second!");
     if (count < 3) {
       setCount(count + 1);
     } else {
@@ -248,7 +248,7 @@ function MessageLine({ message, currentPlayerId, children }) {
         <Avatar index={self ? 0 : 1} playerId={message.playerId} />
       </div>
       <div className={self ? "text-bluegray-500" : "text-gray-700"}>
-        <div className="font-bold">{self ? "You" : "Opponent"}</div>
+        <div className="font-bold">{self ? "You" : "Counterpart"}</div>
         <div>{children}</div>
       </div>
     </div>

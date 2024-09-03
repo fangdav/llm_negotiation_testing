@@ -10,7 +10,6 @@ export function Demographic({ next }) {
 
   const [age, setAge] = useState("");
   const [gender, setGender] = useState("");
-  const [strength, setStrength] = useState("");
   const [fair, setFair] = useState("");
   const [feedback, setFeedback] = useState("");
   const [education, setEducation] = useState("");
@@ -20,7 +19,6 @@ export function Demographic({ next }) {
     player.set("demographicsurvey", {
       age,
       gender,
-      strength,
       fair,
       feedback,
       education,
@@ -55,6 +53,7 @@ export function Demographic({ next }) {
               <h3 className="text-lg font-medium leading-6 text-gray-900">
                 Demographic Survey
               </h3>
+              <p>Thank you for reaching the final page of the exit survey.</p>
               <p className="mt-1 text-sm text-gray-500">
                 Please finish the following short demographic survey. You do not
                 have to provide any information you feel uncomfortable with.
@@ -132,28 +131,14 @@ export function Demographic({ next }) {
                 </div>
               </div>
 
-              <div className="grid grid-cols-3 gap-x-6 gap-y-3">
+              <div className="grid grid-cols-2 gap-x-6 gap-y-3">
                 <label className={labelClassName}>
-                  How would you describe your strategy in this negotiation?
-                </label>
-
-                <label className={labelClassName}>
-                  Do you feel the pay was fair?
+                  Any final comments on your experience participating in this study?
                 </label>
 
                 <label className={labelClassName}>
                   Feedback, including problems you encountered.
                 </label>
-
-                <textarea
-                  className={inputClassName}
-                  dir="auto"
-                  id="strength"
-                  name="strength"
-                  rows={4}
-                  value={strength}
-                  onChange={(e) => setStrength(e.target.value)}
-                />
 
                 <textarea
                   className={inputClassName}
@@ -176,8 +161,12 @@ export function Demographic({ next }) {
                 />
               </div>
 
-              <div className="mb-12">
-                <Button type="submit">Submit</Button>
+              <div className="flex justify-end">
+                <div className="mt-7">
+                  <Button type="submit" scrollToTop>
+                    Submit
+                  </Button>
+                </div>
               </div>
             </div>
           </div>

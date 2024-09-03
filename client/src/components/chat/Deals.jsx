@@ -12,6 +12,7 @@ export function DealArea({
   inputMode,
   setInputMode,
   messages,
+  unilateralNoDeal,
   onNewNoDeal,
   onNewProposal,
   onAccept,
@@ -58,16 +59,47 @@ export function DealArea({
         </Modal>
       )}
 
+      {inputMode === "no-deal-confirm" && (
+        <Modal onClickOut={() => setInputMode("message")} showCloseButton>
+          <NoDealConfirmation
+            onContinue={() => setInputMode("message")}
+            onEnd={onNewNoDeal}
+          />
+        </Modal>
+      )}
+
       <Divider text="or" />
 
       <PositiveNegativeButtons
         positiveText="Propose a deal"
         positiveAction={() => setInputMode("proposal")}
-        positiveDisabled={!canTakeAction}
-        negativeText="End with no deal"
-        negativeAction={onNewNoDeal}
+        positiveDisabled={!canTakeAction}	               
+        negativeText="End with no deal"        
+        negativeAction={unilateralNoDeal ? () => setInputMode("no-deal-confirm") : onNewNoDeal}
         negativeDisabled={!canTakeAction || !canEndNoDeal}
       />
+    </div>
+  );
+}
+
+function NoDealConfirmation({ onContinue, onEnd }) {
+  return (
+    <div className="lg:min-w-96 max-w-prose">
+      <div className="rounded bg-gray-100 p-2">
+        Are you sure you want to walk away without a deal? This will immediately
+        end the negotiation.
+      </div>
+
+      <div className="mt-4">
+        <PositiveNegativeButtons
+          positiveText="No, keep negotiating"
+          positiveAction={onContinue}
+          positiveDisabled={!onContinue}
+          negativeText="Yes, end with no deal"
+          negativeAction={onEnd}
+          negativeDisabled={!onEnd}
+        />
+      </div>
     </div>
   );
 }

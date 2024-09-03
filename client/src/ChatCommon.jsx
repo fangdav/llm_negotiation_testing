@@ -132,14 +132,6 @@ export function ChatCommon({
   };
 
   const onNewNoDeal = async () => {
-    if (unilateralNoDeal) {
-      const res = window.confirm(
-        `Are you sure you want to walk away without a deal?`
-      );
-      if (!res) {
-        return;
-      }
-    }
 
     setBusy(true);
 
@@ -228,6 +220,7 @@ export function ChatCommon({
       waitingOnOtherPlayer={waitingOnOtherPlayer}
       otherPlayerId={otherPlayerId}
       otherPlayerTyping={otherPlayerTyping}
+      unilateralNoDeal={unilateralNoDeal}
     />
   );
 }

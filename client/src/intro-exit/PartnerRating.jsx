@@ -1,6 +1,7 @@
 // @ts-check
 // @ts-ignore
-import React from "react";
+import { usePlayer } from "@empirica/core/player/classic/react";
+import React, { useState } from "react";
 import { Questions } from "../components/Questions";
 
 const defaultOptions = {
@@ -13,22 +14,22 @@ const defaultOptions = {
 
 const questions = [
   {
-    question: "How assertive was your COUNTERPART?",
+    question: <>How <strong>assertive</strong> was your counterpart?</>,
     name: "pr-q1",
     options: defaultOptions,
   },
   {
-    question: "How much empathy did your COUNTERPART convey?",
+    question: <>How much <strong>empathy</strong> did your counterpart convey?</>,
     name: "pr-q2",
     options: defaultOptions,
   },
   {
-    question: "How warm was your COUNTERPART?",
+    question: <>How <strong>warm</strong> was your counterpart?</>,
     name: "pr-q3",
     options: defaultOptions,
   },
   {
-    question: "How competent was your COUNTERPART?",
+    question: <>How <strong>dominant</strong> was your counterpart?</>,
     name: "pr-q4",
     options: defaultOptions,
   },
@@ -45,11 +46,12 @@ export function PartnerRatingSurvey({ next }) {
         questions about your counterpart.
       </p>
 
-      <div className="mt-12">
+      <div className="mt-3">
         <Questions
           playerKey="partnerRatingSurvey"
           questions={questions}
           onDone={next}
+          groupSize={4}
         />
       </div>
     </div>

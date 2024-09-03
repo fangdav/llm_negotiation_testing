@@ -26,6 +26,7 @@ export function Button({
   full = false,
   disabled = false,
   icon = null,
+  scrollToTop = false,
 }) {
   const vari = disabled
     ? variants.disabled
@@ -37,7 +38,17 @@ export function Button({
     <button
       disabled={disabled}
       type={type}
-      onClick={onClick}
+      onClick={
+        scrollToTop
+          ? (e) => {
+              onClick && onClick(e);
+              const scrollContainer = document.getElementById("scroll-container");
+              if (scrollContainer) {
+                scrollContainer.scrollTo(0, 0)
+              }
+            }
+          : onClick
+      }
       className={cn}
       autoFocus={autoFocus}
     >
